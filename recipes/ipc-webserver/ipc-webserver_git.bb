@@ -40,7 +40,8 @@ do_install() {
 
   install -m 0755 ipc-webserver ${D}/${bindir}
   install -m 0444 ${S}/res_config ${D}/data/misc/qmmf/ipc_webserver
-  install -m 0444 ${S}/net_config ${D}/data/misc/qmmf/ipc_webserver
+  install -m 0755 ${S}/net_config ${D}/data/misc/qmmf/ipc_webserver
+  install -m 0444 ${S}/audio_config ${D}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/360_cam.conf ${D}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/ip_cam.conf ${D}/data/misc/qmmf/ipc_webserver
 }
@@ -57,7 +58,8 @@ sysroot_preprocess() {
 
   install -m 0755 ${S}/ipc-webserver ${SYSROOT_DESTDIR}/${bindir}
   install -m 0444 ${S}/res_config ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
-  install -m 0444 ${S}/net_config ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
+  install -m 0755 ${S}/net_config ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
+  install -m 0444 ${S}/audio_config ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/360_cam.conf ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/ip_cam.conf ${SYSROOT_DESTDIR}/data/misc/qmmf/ipc_webserver
 }
