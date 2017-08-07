@@ -7,6 +7,7 @@ ${LICENSE};md5=3775480a712fc46a69647678acb234cb"
 
 
 DEPENDS += "libuv"
+DEPENDS += "libcutils"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://discovery"
