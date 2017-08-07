@@ -19,6 +19,7 @@ DEPENDS += "mm-mux"
 DEPENDS += "vam-lib"
 DEPENDS += "vam-test"
 DEPENDS += "mm-video-noship"
+DEPENDS += "sqlite3"
 
 TARGET_CFLAGS += "-I${STAGING_INCDIR} -I${STAGING_INCDIR}/recorder/"
 TARGET_CFLAGS += "-I${STAGING_INCDIR}/mm-osal/include -I${STAGING_INCDIR}/mm-mux"
@@ -30,6 +31,8 @@ EXTRA_OECONF += " --with-exif=${WORKSPACE}/camera/lib/mm-image-codec/qexif"
 EXTRA_OECONF += " --with-omxcore=${WORKSPACE}/camera/lib/mm-image-codec/qomx_core"
 EXTRA_OECONF += " --with-openmax=${WORKSPACE}/frameworks/native/include/media/openmax"
 EXTRA_OECONF_append = " --with-sanitized-headers=${STAGING_KERNEL_BUILDDIR}/usr/include"
+
+PACKAGECONFIG[sqlite] = "--with-sqlite,--without-sqlite,sqlite3,"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-webserver"
