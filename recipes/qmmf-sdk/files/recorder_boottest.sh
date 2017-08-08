@@ -29,19 +29,7 @@
 file="/etc/boottime_config.txt"
 if [ -e $file ]; then
    var=$(cat $file)
-   if [ "$var" -eq 0 ]
-   then
-      exit 0
-   elif [ "$var" -eq 1 ]
-   then
-      /usr/bin/recorder_test -a -w 3840 -h 2160 -f 30 -t AVC
-   elif [ "$var" -eq 2 ]
-   then
-      /usr/bin/recorder_test -a -w 1920 -h 1440 -f 60 -t AVC
-   elif [ "$var" -eq 3 ]
-   then
-      /usr/bin/recorder_360cam_gtest --gtest_filter=Recorder360Gtest.Stitched4KEncTrack
-   else
-      echo "Invlid boot config value" > /dev/kmsg
+   if [ "$var" -eq 1 ]; then
+      /usr/bin/recorder_test --auto
    fi
 fi
