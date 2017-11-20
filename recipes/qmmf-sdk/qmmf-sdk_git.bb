@@ -35,11 +35,10 @@ CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
 CFLAGS += "-I${STAGING_INCDIR}/mm-osal/include"
 CFLAGS += "-I${STAGING_INCDIR}/fastcv"
 TARGET_CFLAGS += "-I${STAGING_INCDIR}/qcom/display"
-TARGET_CFLAGS += "-I${STAGING_INCDIR}/qmmf-alg"
+TARGET_CFLAGS += "-I${STAGING_INCDIR}/sdm"
 TARGET_LDFLAGS += "-latomic"
 
 EXTRA_OECONF += " --with-basemachine=${BASEMACHINE}"
-EXTRA_OECONF += " --with-gralloc-library=${WORKSPACE}/display/display-hal"
 EXTRA_OECONF += " --with-mm-core=${WORKSPACE}/hardware/qcom/media/mm-core/inc"
 EXTRA_OECONF += " --with-camerahal=${WORKSPACE}/camera/lib/QCamera2/HAL3"
 EXTRA_OECONF += " --with-sanitized-headers=${STAGING_KERNEL_BUILDDIR}/usr/include"
@@ -70,8 +69,8 @@ do_install_append () {
         ln -sf /etc/systemd/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
     fi
-    install -m 0755 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
-    install -m 0755 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
+    install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
+    install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/${userfsdatadir}/misc/qmmf
 }
 
