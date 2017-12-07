@@ -28,7 +28,7 @@
 [Unit]
 Description= QMMF Server Service
 SourcePath=/usr/bin/qmmf-server
-After=mm-qcamera-daemon.service
+After=mm-qcamera-daemon.service leprop.service
 
 [Service]
 Restart=always
