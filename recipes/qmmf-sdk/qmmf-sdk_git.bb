@@ -47,6 +47,7 @@ EXTRA_OECONF += " --with-camifaceinc=${WORKSPACE}/camera/lib/QCamera2/stack/mm-c
 EXTRA_OECONF += " --with-exif=${WORKSPACE}/camera/lib/mm-image-codec/qexif"
 EXTRA_OECONF += " --with-omxcore=${WORKSPACE}/camera/lib/mm-image-codec/qomx_core"
 EXTRA_OECONF += " --with-openmax=${WORKSPACE}/frameworks/native/include/media/openmax"
+EXTRA_OECONF += " --with-displaysync=${STAGING_INCDIR}/sync"
 EXTRA_OECONF += "${@get_product_extras(d)}"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
