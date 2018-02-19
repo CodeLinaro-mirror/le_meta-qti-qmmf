@@ -20,6 +20,8 @@ export CGO_ENABLED = "1"
 export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go"
 
 do_compile() {
+  export CGO_LDFLAGS="$CGO_LDFLAGS -lcutils"
+  export CGO_CFLAGS="$CGO_CFLAGS -DLOG_LEVEL_KPI"
   go build qmmf-webserver.go
 }
 
