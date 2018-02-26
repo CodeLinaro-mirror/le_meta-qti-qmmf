@@ -25,6 +25,7 @@ export CGO_ENABLED = "1"
 export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go"
 
 do_compile() {
+  export CGO_LDFLAGS="$CGO_LDFLAGS -lcutils"
   go build ipc-webserver.go
 }
 
