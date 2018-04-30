@@ -9,7 +9,7 @@ PR = "r0"
 
 DEPENDS = "liblog"
 DEPENDS += "libcutils"
-DEPENDS += "native-frameworks"
+DEPENDS += "binder"
 DEPENDS += "system-core"
 DEPENDS += "glib-2.0"
 DEPENDS += "av-frameworks"

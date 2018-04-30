@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/\
 ${LICENSE};md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS := "go-cross"
+DEPENDS := "go-cross-arm"
 DEPENDS += "github.com-gorilla-muxer"
 DEPENDS += "qmmf-support"
 
@@ -15,14 +15,15 @@ SRC_URI  += "file://qmmf-webserver.service"
 SRC_URI  += "file://0001-qmmf-webserver-update-http-library-path.patch"
 S = "${WORKDIR}/qmmf-webserver"
 
-
+RECIPE_SYSROOT ?= "${STAGING_LIBDIR}/${TARGET_SYS}"
 export CGO_ENABLED = "1"
-export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go"
+export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go:${RECIPE_SYSROOT}/usr/lib/go"
 
 do_compile() {
+  export GOARCH=${TARGET_GOARCH}
   export CGO_LDFLAGS="$CGO_LDFLAGS -lcutils"
   export CGO_CFLAGS="$CGO_CFLAGS -DLOG_LEVEL_KPI"
-  go build qmmf-webserver.go
+  go build -o "${S}/qmmf-webserver" ${S}/qmmf-webserver.go
 }
 
 do_install() {

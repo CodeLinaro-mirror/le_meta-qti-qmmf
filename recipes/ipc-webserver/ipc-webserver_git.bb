@@ -7,7 +7,7 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/\
 ${LICENSE};md5=3775480a712fc46a69647678acb234cb"
 
-DEPENDS := "go-cross"
+DEPENDS := "go-cross-arm"
 DEPENDS += "github.com-gorilla-muxer"
 DEPENDS += "github.com-gorilla-websocket"
 DEPENDS += "github.com-bitly-simplejson"
@@ -21,12 +21,14 @@ S = "${WORKDIR}/ipc-webserver"
 
 FILES_${PN} += "ipc-webserver"
 
+RECIPE_SYSROOT ?= "${STAGING_LIBDIR}/${TARGET_SYS}"
 export CGO_ENABLED = "1"
-export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go"
+export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go:${RECIPE_SYSROOT}/usr/lib/go"
 
 do_compile() {
+  export GOARCH=${TARGET_GOARCH}
   export CGO_LDFLAGS="$CGO_LDFLAGS -lcutils"
-  go build ipc-webserver.go
+  go build -o "${S}/ipc-webserver" ${S}/ipc-webserver.go
 }
 
 do_install() {
@@ -39,7 +41,7 @@ do_install() {
   install -d ${D}/data/misc/qmmf/ipc_webserver/video
   install -d ${D}/${bindir}
 
-  install -m 0755 ipc-webserver ${D}/${bindir}
+  install -m 0755 ${S}/ipc-webserver ${D}/${bindir}
   install -m 0444 ${S}/res_config ${D}/data/misc/qmmf/ipc_webserver
   install -m 0755 ${S}/net_config ${D}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/audio_config ${D}/data/misc/qmmf/ipc_webserver

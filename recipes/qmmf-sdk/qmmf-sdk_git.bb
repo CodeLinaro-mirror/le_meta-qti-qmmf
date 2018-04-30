@@ -18,7 +18,7 @@ def get_product_extras(d):
 
 DEPENDS = "liblog"
 DEPENDS += "libcutils"
-DEPENDS += "native-frameworks"
+DEPENDS += "binder"
 DEPENDS += "system-core"
 DEPENDS += "glib-2.0"
 DEPENDS += "av-frameworks"
@@ -26,8 +26,10 @@ DEPENDS += "gtest"
 DEPENDS += "media"
 DEPENDS += "cairo"
 DEPENDS += "mm-parser"
+DEPENDS += "mm-parser-noship"
 DEPENDS += "mm-osal"
 DEPENDS += "audiohal"
+DEPENDS += "qsthw-api"
 DEPENDS += "fastcv-noship"
 DEPENDS += "jsoncpp"
 DEPENDS_append_apq8053 += "libjpeg-turbo"
@@ -90,6 +92,8 @@ pkg_postinst_${PN} () {
 
 do_package_qa () {
 }
+
+PACKAGES =+ "${PN}-qmmf-server"
 
 FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
 FILES_${PN}-qmmf-server     = "${bindir}/qmmf-server"
