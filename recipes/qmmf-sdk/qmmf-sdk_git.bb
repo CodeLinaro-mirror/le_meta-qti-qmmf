@@ -30,6 +30,7 @@ DEPENDS += "mm-osal"
 DEPENDS += "audiohal"
 DEPENDS += "fastcv-noship"
 DEPENDS += "jsoncpp"
+DEPENDS_append_apq8053 += "libjpeg-turbo"
 
 CFLAGS += "-I${STAGING_INCDIR}"
 CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
