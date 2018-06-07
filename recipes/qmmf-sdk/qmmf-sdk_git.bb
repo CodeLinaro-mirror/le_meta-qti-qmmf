@@ -32,8 +32,12 @@ DEPENDS += "audiohal"
 DEPENDS += "qsthw-api"
 DEPENDS += "fastcv-noship"
 DEPENDS += "jsoncpp"
+DEPENDS += "adreno"
+
 DEPENDS_append_apq8053 += "camera"
 DEPENDS_append_apq8053 += "libjpeg-turbo"
+
+DEPENDS_append_qcs605 += "media-headers"
 
 CFLAGS += "-I${STAGING_INCDIR}"
 CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
@@ -58,6 +62,7 @@ EXTRA_OECONF += "${@get_product_extras(d)}"
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://qmmf-server.service"
+SRC_URI_append_qcs605 += "file://qmmf-server-qcs605.service"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 
@@ -66,13 +71,16 @@ S = "${WORKDIR}/qmmf-sdk"
 INITSCRIPT_NAME = "recorder_boottest.sh"
 INITSCRIPT_PARAMS = "start 21 5 ."
 
+QMMF_SERVICE_FILENAME = "qmmf-server.service"
+QMMF_SERVICE_FILENAME_qcs605 = "qmmf-server-qcs605.service"
+
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
 do_install_append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}/etc/systemd/system/
-        install -m 0644 ${WORKDIR}/qmmf-server.service -D ${D}/etc/systemd/system/qmmf-server.service
+        install -m 0644 ${WORKDIR}/${QMMF_SERVICE_FILENAME}  -D ${D}/etc/systemd/system/qmmf-server.service
         install -d ${D}/etc/systemd/system/multi-user.target.wants/
         # enable the service for multi-user.target
         ln -sf /etc/systemd/qmmf-server.service \
