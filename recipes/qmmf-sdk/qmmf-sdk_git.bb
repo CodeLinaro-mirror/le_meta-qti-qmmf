@@ -63,6 +63,9 @@ S = "${WORKDIR}/qmmf-sdk"
 INITSCRIPT_NAME = "recorder_boottest.sh"
 INITSCRIPT_PARAMS = "start 21 5 ."
 
+SOLIBS = ".so*"
+FILES_SOLIBSDEV = ""
+
 do_install_append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}/etc/systemd/system/
@@ -137,4 +140,6 @@ FILES_${PN}-libqmmf_player_service-dbg    = "${libdir}/.debug/libqmmf_player_ser
 FILES_${PN}-libqmmf_player_service        = "${libdir}/libqmmf_player_service.so.*"
 FILES_${PN}-libqmmf_player_service-dev    = "${libdir}/libqmmf_player_service.so ${libdir}/libqmmf_player_service.la ${includedir}"
 
-INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps"
+FILES_${PN} += "${userfsdatadir}/misc/qmmf/*.json"
+
+INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
