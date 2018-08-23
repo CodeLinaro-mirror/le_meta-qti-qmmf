@@ -15,6 +15,7 @@ DEPENDS += "libcutils"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"
+SRC_URI += "file://ipc-webserver.service"
 SRCREV = "b378caee5b2a673abe3897c40fde529bff7b986e"
 
 S = "${WORKDIR}/ipc-webserver"
@@ -47,6 +48,14 @@ do_install() {
   install -m 0444 ${S}/audio_config ${D}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/360_cam.conf ${D}/data/misc/qmmf/ipc_webserver
   install -m 0444 ${S}/ip_cam.conf ${D}/data/misc/qmmf/ipc_webserver
+  if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+      install -d ${D}/etc/systemd/system/
+      install -m 0644 ${WORKDIR}/ipc-webserver.service -D ${D}/etc/systemd/system/ipc-webserver.service
+      install -d ${D}/etc/systemd/system/multi-user.target.wants/
+      # enable the service for multi-user.target
+      ln -sf /etc/systemd/ipc-webserver.service \
+          ${D}/etc/systemd/system/multi-user.target.wants/ipc-webserver.service
+  fi
 }
 
 sysroot_preprocess() {
@@ -70,3 +79,4 @@ sysroot_preprocess() {
 SYSROOT_PREPROCESS_FUNCS += "sysroot_preprocess"
 
 FILES_${PN} += "/data/misc/qmmf/ipc_webserver/*"
+FILES_${PN} += "/etc/systemd/system/"

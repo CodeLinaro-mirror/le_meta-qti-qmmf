@@ -38,6 +38,7 @@ DEPENDS_append_apq8053 += "camera"
 DEPENDS_append_apq8053 += "libjpeg-turbo"
 
 DEPENDS_append_qcs605 += "media-headers"
+DEPENDS_append_qcs605 += "weston"
 
 CFLAGS += "-I${STAGING_INCDIR}"
 CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
