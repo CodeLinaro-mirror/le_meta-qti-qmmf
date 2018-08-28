@@ -15,7 +15,7 @@ DEPENDS += "libcutils"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"
-SRCREV = "${AUTOREV}"
+SRCREV = "b378caee5b2a673abe3897c40fde529bff7b986e"
 
 S = "${WORKDIR}/ipc-webserver"
 
