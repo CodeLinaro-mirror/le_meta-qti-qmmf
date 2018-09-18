@@ -7,3 +7,4 @@ IMAGE_INSTALL += "${@base_contains('MULTILIB_VARIANTS', 'lib32', 'lib32-jsoncpp'
 IMAGE_INSTALL += "${@base_contains('MULTILIB_VARIANTS', 'lib32', 'lib32-qmmf-support', 'qmmf-support', d)}"
 IMAGE_INSTALL += "${@base_contains('MULTILIB_VARIANTS', 'lib32', 'lib32-qmmf-webserver', 'qmmf-webserver', d)}"
 IMAGE_INSTALL += "${@base_contains('MULTILIB_VARIANTS', 'lib32', 'lib32-qmmf-sdk', 'qmmf-sdk', d)}"
+IMAGE_INSTALL += "lib32-live555-qti"
