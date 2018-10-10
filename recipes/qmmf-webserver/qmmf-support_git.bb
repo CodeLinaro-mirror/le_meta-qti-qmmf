@@ -20,6 +20,7 @@ DEPENDS += "vam-lib"
 DEPENDS += "vam-test"
 DEPENDS += "mm-video-noship"
 DEPENDS += "sqlite3"
+DEPENDS += "data dsutils qmi qmi-framework"
 
 TARGET_CFLAGS += "-I${STAGING_INCDIR} -I${STAGING_INCDIR}/recorder/"
 TARGET_CFLAGS += "-I${STAGING_INCDIR}/mm-osal/include -I${STAGING_INCDIR}/mm-mux"
