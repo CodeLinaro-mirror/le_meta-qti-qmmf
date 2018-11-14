@@ -34,17 +34,23 @@ DEPENDS += "fastcv-noship"
 DEPENDS += "jsoncpp"
 DEPENDS += "adreno"
 DEPENDS += "qmmf-algs"
-
+DEPENDS += "libion"
 DEPENDS_append_apq8053 += "camera"
 DEPENDS_append_apq8053 += "libjpeg-turbo"
 
 DEPENDS_append_qcs605 += "media-headers"
 DEPENDS_append_qcs605 += "weston wayland-native"
 
+DEPENDS_append_sdmsteppe += "media-headers"
+DEPENDS_append_sdmsteppe += "weston wayland-native"
+
 CFLAGS += "-I${STAGING_INCDIR}"
 CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
 CFLAGS += "-I${STAGING_INCDIR}/mm-osal/include"
 CFLAGS += "-I${STAGING_INCDIR}/fastcv"
+CPPFLAGS += "-I${STAGING_INCDIR}/ion_headers"
+CPPFLAGS_append_sdmsteppe += "-I${STAGING_INCDIR}/mm-core"
+
 TARGET_CFLAGS += "-I${STAGING_INCDIR}/qcom/display"
 TARGET_CFLAGS += "-I${STAGING_INCDIR}/sdm"
 TARGET_LDFLAGS += "-latomic"
@@ -59,12 +65,14 @@ EXTRA_OECONF += " --with-exif=${WORKSPACE}/camera/lib/mm-image-codec/qexif"
 EXTRA_OECONF += " --with-omxcore=${WORKSPACE}/camera/lib/mm-image-codec/qomx_core"
 EXTRA_OECONF += " --with-openmax=${WORKSPACE}/frameworks/native/include/media/openmax"
 EXTRA_OECONF += " --with-displaysync=${STAGING_INCDIR}/sync"
+EXTRA_OECONF += " --with-ion=${PKG_CONFIG_SYSROOT_DIR}/usr/include/ion_headers"
 EXTRA_OECONF += "${@get_product_extras(d)}"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://qmmf-server.service"
 SRC_URI_append_qcs605 += "file://qmmf-server-qcs605.service"
+SRC_URI_append_sdmsteppe += "file://qmmf-server-sdmsteppe.service"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 
@@ -75,6 +83,7 @@ INITSCRIPT_PARAMS = "start 21 5 ."
 
 QMMF_SERVICE_FILENAME = "qmmf-server.service"
 QMMF_SERVICE_FILENAME_qcs605 = "qmmf-server-qcs605.service"
+QMMF_SERVICE_FILENAME_sdmsteppe = "qmmf-server-sdmsteppe.service"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
