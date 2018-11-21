@@ -158,3 +158,4 @@ FILES_${PN}-libqmmf_player_service-dev    = "${libdir}/libqmmf_player_service.so
 FILES_${PN} += "${userfsdatadir}/misc/qmmf/*.json"
 
 INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
+do_configure[depends] += "virtual/kernel:do_shared_workdir"
