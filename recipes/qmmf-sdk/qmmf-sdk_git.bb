@@ -33,6 +33,7 @@ DEPENDS += "qsthw-api"
 DEPENDS += "fastcv-noship"
 DEPENDS += "jsoncpp"
 DEPENDS += "adreno"
+DEPENDS += "qmmf-algs"
 
 DEPENDS_append_apq8053 += "camera"
 DEPENDS_append_apq8053 += "libjpeg-turbo"
