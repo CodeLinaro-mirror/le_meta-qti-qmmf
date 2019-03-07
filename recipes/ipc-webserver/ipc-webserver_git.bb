@@ -12,6 +12,7 @@ DEPENDS += "github.com-gorilla-muxer"
 DEPENDS += "github.com-gorilla-websocket"
 DEPENDS += "github.com-bitly-simplejson"
 DEPENDS += "libcutils"
+DEPENDS += "qmmf-support"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"
@@ -29,6 +30,7 @@ export GOPATH="${S}:${STAGING_LIBDIR}/${TARGET_SYS}/go:${RECIPE_SYSROOT}/usr/lib
 do_compile() {
   export GOARCH=${TARGET_GOARCH}
   export CGO_LDFLAGS="$CGO_LDFLAGS -lcutils"
+  export CGO_CFLAGS="$CGO_CFLAGS -I${STAGING_INCDIR}/qmmf-support"
   go build -o "${S}/ipc-webserver" ${S}/ipc-webserver.go
 }
 
