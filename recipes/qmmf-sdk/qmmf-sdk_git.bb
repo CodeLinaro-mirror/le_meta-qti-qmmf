@@ -25,14 +25,14 @@ DEPENDS += "jsoncpp"
 DEPENDS += "libcutils"
 DEPENDS += "libion"
 DEPENDS += "liblog"
-DEPENDS += "${@bb.utils.contains('COMBINED_FEATURES', 'qti-audio', 'audiohal', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qmmf-wayland', 'wayland-native weston', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
 
 PACKAGECONFIG ??= " \
-${@bb.utils.contains('COMBINED_FEATURES', 'qti-audio', 'audio', '', d)} \
+${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'audio', '', d)} \
 ${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'avcodec', '', d)} \
 ${@bb.utils.contains('DISTRO_FEATURES', 'jpeg', 'jpeg', '', d)} \
 "
@@ -112,14 +112,6 @@ FILES_${PN}-libcodec_adaptor-dev    = "${libdir}/libcodec_adaptor.so ${libdir}/l
 FILES_${PN}-libav_codec-dbg    = "${libdir}/.debug/libav_codec.*"
 FILES_${PN}-libav_codec        = "${libdir}/libav_codec.so.*"
 FILES_${PN}-libav_codec-dev    = "${libdir}/libav_codec.so ${libdir}/libav_codec.la ${includedir}"
-
-FILES_${PN}-libqmmf_audio_client-dbg    = "${libdir}/.debug/libqmmf_audio_client.*"
-FILES_${PN}-libqmmf_audio_client        = "${libdir}/libqmmf_audio_client.so.*"
-FILES_${PN}-libqmmf_audio_client-dev    = "${libdir}/libqmmf_audio_client.so ${libdir}/libqmmf_audio_client.la ${includedir}"
-
-FILES_${PN}-libqmmf_audio_service-dbg    = "${libdir}/.debug/libqmmf_audio_service.*"
-FILES_${PN}-libqmmf_audio_service        = "${libdir}/libqmmf_audio_service.so.*"
-FILES_${PN}-libqmmf_audio_service-dev    = "${libdir}/libqmmf_audio_service.so ${libdir}/libqmmf_audio_service.la ${includedir}"
 
 FILES_${PN} += "${userfsdatadir}/misc/qmmf/*.json"
 
