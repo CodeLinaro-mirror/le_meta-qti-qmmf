@@ -1,4 +1,4 @@
-# Copyright (c) 2018, 2019, The Linux Foundation. All rights reserved.
+# Copyright (c) 2019, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,15 +26,17 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [Unit]
-Description= QMMF Server Service
-SourcePath=/usr/bin/qmmf-server
+Description= QMMF Weberver Service
+SourcePath=/usr/bin/qmmf-webserver
 
 [Service]
-User=qmmfsvr
-Group=qmmfsvr
+User=qmmfwebsvr
+Group=qmmfwebsvr
 Restart=always
-Environment=LD_LIBRARY_PATH=/usr/lib/camera/components/:/usr/lib/camera/
-ExecStart=/usr/bin/qmmf-server
+Environment=LD_LIBRARY_PATH=/usr/lib/
+Environment=ADSP_LIBRARY_PATH=/usr/lib/
+Environment=XDG_RUNTIME_DIR=/run/user/root
+ExecStart=/usr/bin/qmmf-webserver
 
 [Install]
 WantedBy=multi-user.target
