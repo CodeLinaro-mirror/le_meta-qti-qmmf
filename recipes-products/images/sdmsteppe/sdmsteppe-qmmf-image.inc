@@ -3,7 +3,6 @@
 IMAGE_INSTALL += "ipmon"
 IMAGE_INSTALL += "discovery"
 IMAGE_INSTALL += "rtsp-proxy"
-IMAGE_INSTALL += "webui"
 
 # Following packages support only 32-bit compilation.
 # When multilib is enabled, compile them with lib32- prefix.
