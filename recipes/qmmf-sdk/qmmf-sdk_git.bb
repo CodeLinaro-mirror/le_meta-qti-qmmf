@@ -1,4 +1,4 @@
-inherit cmake pkgconfig update-rc.d sdllvm
+inherit cmake pkgconfig
 
 DESCRIPTION = "QMMF SDK"
 LICENSE = "BSD"
@@ -58,9 +58,6 @@ SRC_URI  += "file://boottime_config.txt"
 
 S = "${WORKDIR}/qmmf-sdk"
 
-INITSCRIPT_NAME = "recorder_boottest.sh"
-INITSCRIPT_PARAMS = "start 21 5 ."
-
 QMMF_SERVICE_FILENAME = "qmmf-server.service"
 QMMF_SERVICE_FILENAME_qcs605 = "qmmf-server-qcs605.service"
 QMMF_SERVICE_FILENAME_sdmsteppe = "qmmf-server-sdmsteppe.service"
@@ -82,14 +79,6 @@ do_install_append () {
     install -d ${D}/${userfsdatadir}/misc/qmmf
     install -m 0444 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
     install -d ${D}/${userfsdatadir}/misc/vam
-}
-
-pkg_postinst_${PN} () {
-  update-alternatives --install ${sysconfdir}/init.d/$(INITSCRIPT_NAME) recorder_test $(INITSCRIPT_NAME) 60
-    [ -n "$D" ] && OPT="-r $D" || OPT="-s"
-    # remove all rc.d-links potentially created from alternatives
-    update-rc.d $OPT -f $(INITSCRIPT_NAME) remove
-    update-rc.d $OPT $(INITSCRIPT_NAME) $(INITSCRIPT_PARAMS)
 }
 
 PACKAGES =+ "${PN}-qmmf-server"
