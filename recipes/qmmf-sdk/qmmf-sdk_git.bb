@@ -80,7 +80,7 @@ do_install_append () {
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/${userfsdatadir}/misc/qmmf
-    install -m 0750 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
+    install -m 0444 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
 }
 
 pkg_postinst_${PN} () {
