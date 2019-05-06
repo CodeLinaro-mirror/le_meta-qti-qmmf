@@ -18,14 +18,9 @@ DEPENDS += "zlib"
 
 do_patch[depends] = "curl-native:do_populate_sysroot unzip-native:do_populate_sysroot"
 
-SRCREV = "6612da89516247503f03ef76e974b51a434fb52e"
-
-SRC_URI = "git://source.codeaurora.org/quic/lc/external/github.com/tensorflow/tensorflow.git;branch=chromium.org/r1.13"
-SRC_URI += "file://0001-Add-insecure-flag-to-curl-command.patch"
-SRC_URI += "file://0002-Add-cmake-files-for-TFLite-v1.13.patch"
-SRC_URI += "file://0003-Remove-android-dependency-at-nnapi-library-loading.patch"
-
-S = "${WORKDIR}/git"
+FILESPATH =+ "${WORKSPACE}/external/:"
+SRC_URI = "file://tensorflow"
+S = "${WORKDIR}/tensorflow"
 
 EXTRA_OECMAKE += " -DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += " -DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
