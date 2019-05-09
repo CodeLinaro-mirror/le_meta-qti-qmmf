@@ -13,6 +13,8 @@ DEPENDS += "github.com-gorilla-websocket"
 DEPENDS += "github.com-bitly-simplejson"
 DEPENDS += "libcutils"
 DEPENDS += "qmmf-support"
+DEPENDS_remove_sdmsteppe = "go-cross-arm"
+DEPENDS_append_sdmsteppe = " go-cross-canadian-arm"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"

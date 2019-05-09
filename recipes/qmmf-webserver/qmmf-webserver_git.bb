@@ -8,6 +8,8 @@ ${LICENSE};md5=89aea4e17d99a7cacdbeed46a0096b10"
 DEPENDS := "go-cross-arm"
 DEPENDS += "github.com-gorilla-muxer"
 DEPENDS += "qmmf-support"
+DEPENDS_remove_sdmsteppe = "go-cross-arm"
+DEPENDS_append_sdmsteppe = " go-cross-canadian-arm"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-webserver"
