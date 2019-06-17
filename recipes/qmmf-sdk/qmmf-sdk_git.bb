@@ -1,20 +1,14 @@
-inherit autotools pkgconfig update-rc.d sdllvm
+inherit cmake pkgconfig update-rc.d sdllvm
 
 DESCRIPTION = "QMMF SDK"
 LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/\
-${LICENSE};md5=3775480a712fc46a69647678acb234cb"
+LIC_FILES_CHKSUM = "\
+file://${COMMON_LICENSE_DIR}/${LICENSE};md5=3775480a712fc46a69647678acb234cb\
+"
 
 PR = "r0"
 
-def get_product_extras(d):
-        if d.getVar('MACHINE', True) == 'apq8096':
-                if d.getVar('PRODUCT', True) == 'drone':
-                        return " --with-drone-target=true"
-                else:
-                        return ""
-        else:
-                return ""
+SSTATE_DUPWHITELIST = "/"
 
 DEPENDS = "liblog"
 DEPENDS += "libcutils"
@@ -22,6 +16,7 @@ DEPENDS += "binder"
 DEPENDS += "system-core"
 DEPENDS += "glib-2.0"
 DEPENDS += "av-frameworks"
+DEPENDS += "jpeg"
 DEPENDS += "gtest"
 DEPENDS += "media"
 DEPENDS += "cairo"
@@ -44,29 +39,14 @@ DEPENDS_append_qcs605 += "weston wayland-native"
 DEPENDS_append_sdmsteppe += "media-headers"
 DEPENDS_append_sdmsteppe += "weston wayland-native"
 
-CFLAGS += "-I${STAGING_INCDIR}"
-CFLAGS += "-I${STAGING_INCDIR}/mm-parser/include"
-CFLAGS += "-I${STAGING_INCDIR}/mm-osal/include"
-CFLAGS += "-I${STAGING_INCDIR}/fastcv"
-CPPFLAGS += "-I${STAGING_INCDIR}/ion_headers"
-CPPFLAGS_append_sdmsteppe += "-I${STAGING_INCDIR}/mm-core"
+SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 
-TARGET_CFLAGS += "-I${STAGING_INCDIR}/qcom/display"
-TARGET_CFLAGS += "-I${STAGING_INCDIR}/sdm"
-TARGET_LDFLAGS += "-latomic"
-
-EXTRA_OECONF += " --with-basemachine=${BASEMACHINE}"
-EXTRA_OECONF += " --with-mm-core=${WORKSPACE}/hardware/qcom/media/mm-core/inc"
-EXTRA_OECONF += " --with-camerahal=${WORKSPACE}/camera/lib/QCamera2/HAL3"
-EXTRA_OECONF += " --with-sanitized-headers=${STAGING_KERNEL_BUILDDIR}/usr/include"
-EXTRA_OECONF += " --with-camcommon=${WORKSPACE}/camera/lib/QCamera2/stack/common"
-EXTRA_OECONF += " --with-camifaceinc=${WORKSPACE}/camera/lib/QCamera2/stack/mm-camera-interface/inc"
-EXTRA_OECONF += " --with-exif=${WORKSPACE}/camera/lib/mm-image-codec/qexif"
-EXTRA_OECONF += " --with-omxcore=${WORKSPACE}/camera/lib/mm-image-codec/qomx_core"
-EXTRA_OECONF += " --with-openmax=${WORKSPACE}/frameworks/native/include/media/openmax"
-EXTRA_OECONF += " --with-displaysync=${STAGING_INCDIR}/sync"
-EXTRA_OECONF += " --with-ion=${PKG_CONFIG_SYSROOT_DIR}/usr/include/ion_headers"
-EXTRA_OECONF += "${@get_product_extras(d)}"
+EXTRA_OECMAKE += "${BASE_EXTRAS_CMAKE}"
+EXTRA_OECMAKE += "-DWORKSPACE=${WORKSPACE}"
+EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
+EXTRA_OECMAKE += "-DQMMF_DATA=/data/misc/qmmf"
+EXTRA_OECMAKE += "-DQMMF_SDK_INC_DIR=${SRC_DIR}"
+EXTRA_OECMAKE += "-DBUILD_CATEGORY=ALL"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
@@ -100,7 +80,8 @@ do_install_append () {
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/${userfsdatadir}/misc/qmmf
-    install -m 0750 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
+    install -m 0444 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
+    install -d ${D}/${userfsdatadir}/misc/vam
 }
 
 pkg_postinst_${PN} () {
@@ -109,9 +90,6 @@ pkg_postinst_${PN} () {
     # remove all rc.d-links potentially created from alternatives
     update-rc.d $OPT -f $(INITSCRIPT_NAME) remove
     update-rc.d $OPT $(INITSCRIPT_NAME) $(INITSCRIPT_PARAMS)
-}
-
-do_package_qa () {
 }
 
 PACKAGES =+ "${PN}-qmmf-server"

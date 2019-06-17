@@ -13,6 +13,7 @@ FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-webserver"
 SRC_URI  += "file://qmmf-webserver.service"
 SRC_URI  += "file://qmmf-webserver-qcs605.service"
+SRC_URI  += "file://qmmf-webserver-sdmsteppe.service"
 SRC_URI  += "file://0001-qmmf-webserver-update-http-library-path.patch"
 S = "${WORKDIR}/qmmf-webserver"
 
@@ -29,6 +30,7 @@ do_compile() {
 
 QMMF_WEBSERVER_SERVICE_FILENAME = "qmmf-webserver.service"
 QMMF_WEBSERVER_SERVICE_FILENAME_qcs605 = "qmmf-webserver-qcs605.service"
+QMMF_WEBSERVER_SERVICE_FILENAME_sdmsteppe = "qmmf-webserver-sdmsteppe.service"
 
 do_install() {
   install -d "${D}/${bindir}"
