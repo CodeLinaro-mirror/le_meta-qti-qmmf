@@ -77,6 +77,7 @@ do_install_append () {
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/${userfsdatadir}/misc/qmmf
+    install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -m 0444 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
     install -d ${D}/${userfsdatadir}/misc/vam
 }
@@ -87,6 +88,7 @@ FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
 FILES_${PN}-qmmf-server     = "${bindir}/qmmf-server"
 FILES_${PN}-qmmf-server    += "/etc/systemd/system/"
 FILES_${PN}-qmmf-server    += "${userfsdatadir}/*"
+FILES_${PN}-qmmf-server    += "/mnt/sdcard/data/misc/qmmf/"
 
 FILES_${PN}-libqmmf_recorder_client-dbg    = "${libdir}/.debug/libqmmf_recorder_client.*"
 FILES_${PN}-libqmmf_recorder_client        = "${libdir}/libqmmf_recorder_client.so.*"
