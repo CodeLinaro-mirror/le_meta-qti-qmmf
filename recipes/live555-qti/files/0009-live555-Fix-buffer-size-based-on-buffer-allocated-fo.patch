@@ -1,0 +1,34 @@
+From 9cc59a764857a318a1abcabd5e0513943b044730 Mon Sep 17 00:00:00 2001
+From: Sagar Sahu <sahusag@codeaurora.org>
+Date: Tue, 6 Aug 2019 14:42:50 +0530
+Subject: [PATCH] live555: Fix buffer size based on buffer allocated for copy
+
+---
+ liveMedia/Base64.cpp | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+ mode change 100644 => 100755 liveMedia/Base64.cpp
+
+diff --git a/liveMedia/Base64.cpp b/liveMedia/Base64.cpp
+old mode 100644
+new mode 100755
+index 0e27ba5..1decfe4
+--- a/liveMedia/Base64.cpp
++++ b/liveMedia/Base64.cpp
+@@ -52,9 +52,13 @@ unsigned char* base64Decode(char const* in, unsigned inSize,
+     haveInitializedBase64DecodeTable = True;
+   }
+
+-  unsigned char* out = (unsigned char*)strDupSize(in); // ensures we have enough space
++  size_t outSize = 0;
++  unsigned char* out = (unsigned char*)strDupSize(in, outSize); // ensures we have enough space and size as allocated size
+   int k = 0;
+   int paddingCount = 0;
++  if (inSize != outSize) {
++    inSize = outSize;
++  }
+   int const jMax = inSize - 3;
+      // in case "inSize" is not a multiple of 4 (although it should be)
+   for (int j = 0; j < jMax; j += 4) {
+--
+1.9.1
+
