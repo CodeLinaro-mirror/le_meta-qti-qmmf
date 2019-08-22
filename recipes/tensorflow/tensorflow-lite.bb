@@ -25,7 +25,9 @@ SRC_URI = "git://source.codeaurora.org/quic/lc/external/github.com/tensorflow/te
 SRC_URI += "file://0001-Add-insecure-flag-to-curl-command-for-v1.14.patch"
 SRC_URI += "file://0002-Add-cmake-files-for-TFLite-v1.14.patch"
 SRC_URI += "file://0003-Remove-android-dependency-at-nnapi-library-loading-for-v1.14.patch"
-SRC_URI += "file://0004-Add-NNAPI-delegate-support-in-label-image-for-v1.14.patch"
+SRC_URI += "file://0004-label_image-Add-support-for-picking-delegate.patch"
+SRC_URI += "file://0005-label_image-Enchance-input-parser-and-output-capabil.patch"
+
 
 S = "${WORKDIR}/git"
 
