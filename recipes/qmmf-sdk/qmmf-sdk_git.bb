@@ -41,10 +41,13 @@ DEPENDS_append_sdmsteppe += "weston wayland-native"
 
 SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 
+# Data folder for qmmf sdk
+QMMF_DATA = "${userfsdatadir}/misc/qmmf"
+
 EXTRA_OECMAKE += "${BASE_EXTRAS_CMAKE}"
 EXTRA_OECMAKE += "-DWORKSPACE=${WORKSPACE}"
 EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
-EXTRA_OECMAKE += "-DQMMF_DATA=/data/misc/qmmf"
+EXTRA_OECMAKE += "-DQMMF_DATA=${QMMF_DATA}"
 EXTRA_OECMAKE += "-DQMMF_SDK_INC_DIR=${SRC_DIR}"
 EXTRA_OECMAKE += "-DBUILD_CATEGORY=ALL"
 
@@ -76,9 +79,7 @@ do_install_append () {
     fi
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
-    install -d ${D}/${userfsdatadir}/misc/qmmf
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
-    install -m 0444 ${S}/common/overlay/test/raw_image/overlay_test.rgba -D ${D}/${userfsdatadir}/misc/qmmf/overlay_test.rgba
     install -d ${D}/${userfsdatadir}/misc/vam
 }
 
