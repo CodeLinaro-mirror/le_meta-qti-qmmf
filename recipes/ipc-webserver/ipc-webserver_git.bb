@@ -19,6 +19,7 @@ DEPENDS_append_sdmsteppe = " go-cross-canadian-arm"
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"
 SRC_URI += "file://ipc-webserver.service"
+SRC_URI += "file://ipc-webserver-qcs605.service"
 SRC_URI += "file://ipc-webserver-sdmsteppe.service"
 SRCREV = "b378caee5b2a673abe3897c40fde529bff7b986e"
 
@@ -39,6 +40,7 @@ do_compile() {
 
 IPC_WEBSERVER_SERVICE_FILENAME = "ipc-webserver.service"
 IPC_WEBSERVER_SERVICE_FILENAME_sdmsteppe = "ipc-webserver-sdmsteppe.service"
+IPC_WEBSERVER_SERVICE_FILENAME_qcs605 = "ipc-webserver-qcs605.service"
 
 do_install() {
   install -d ${D}/data/misc/qmmf/ipc_webserver
