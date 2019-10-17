@@ -6,38 +6,40 @@ LIC_FILES_CHKSUM = "\
 file://${COMMON_LICENSE_DIR}/${LICENSE};md5=3775480a712fc46a69647678acb234cb\
 "
 
-PR = "r0"
-
 SSTATE_DUPWHITELIST = "/"
 
-DEPENDS = "liblog"
-DEPENDS += "libcutils"
+# Mandatory DISTRO_FEATURES to set for QMMF
+
+REQUIRED_DISTRO_FEATURES += "qti-camera"
+REQUIRED_DISTRO_FEATURES += "qti-qmmf"
+REQUIRED_DISTRO_FEATURES += "qti-video"
+
+# Required Dependencies for qmmf-sdk
+
 DEPENDS += "binder"
-DEPENDS += "system-core"
-DEPENDS += "glib-2.0"
-DEPENDS += "av-frameworks"
-DEPENDS += "jpeg"
-DEPENDS += "gtest"
-DEPENDS += "media"
 DEPENDS += "cairo"
-DEPENDS += "mm-parser"
-DEPENDS += "mm-parser-noship"
-DEPENDS += "mm-osal"
-DEPENDS += "audiohal"
-DEPENDS += "qsthw-api"
-DEPENDS += "fastcv-noship"
+DEPENDS += "glib-2.0"
+DEPENDS += "gtest"
+DEPENDS += "jpeg"
 DEPENDS += "jsoncpp"
-DEPENDS += "adreno"
-DEPENDS += "qmmf-algs"
+DEPENDS += "libcutils"
 DEPENDS += "libion"
-DEPENDS_append_apq8053 += "camera"
-DEPENDS_append_apq8053 += "libjpeg-turbo"
+DEPENDS += "liblog"
+DEPENDS += "${@bb.utils.contains('COMBINED_FEATURES', 'qti-audio', 'audiohal', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qmmf-wayland', 'wayland-native weston', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
 
-DEPENDS_append_qcs605 += "media-headers"
-DEPENDS_append_qcs605 += "weston wayland-native"
+PACKAGECONFIG ??= " \
+${@bb.utils.contains('COMBINED_FEATURES', 'qti-audio', 'audio', '', d)} \
+${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'avcodec', '', d)} \
+${@bb.utils.contains('DISTRO_FEATURES', 'jpeg', 'jpeg', '', d)} \
+"
 
-DEPENDS_append_sdmsteppe += "media-headers"
-DEPENDS_append_sdmsteppe += "weston wayland-native"
+PACKAGECONFIG[audio] = " -D_ENABLE_AUDIO=true, -D_ENABLE_AUDIO=false,,"
+PACKAGECONFIG[avcodec] = " -D_ENABLE_AVCODEC=true, -D_ENABLE_AVCODEC=false,,"
+PACKAGECONFIG[jpeg] = " -D_ENABLE_JPEG=true, -D_ENABLE_JPEG=false,,"
 
 SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 
@@ -50,20 +52,15 @@ EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
 EXTRA_OECMAKE += "-DQMMF_DATA=${QMMF_DATA}"
 EXTRA_OECMAKE += "-DQMMF_SDK_INC_DIR=${SRC_DIR}"
 EXTRA_OECMAKE += "-DBUILD_CATEGORY=ALL"
+EXTRA_OECMAKE += "-DTARGET_BOARD_PLATFORM=${BASEMACHINE}"
+EXTRA_OECMAKE += "-DQMMF_SYSTEMD_DIR=${sysconfdir}/systemd/system"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
-SRC_URI  += "file://qmmf-server.service"
-SRC_URI_append_qcs605 += "file://qmmf-server-qcs605.service"
-SRC_URI_append_sdmsteppe += "file://qmmf-server-sdmsteppe.service"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 
 S = "${WORKDIR}/qmmf-sdk"
-
-QMMF_SERVICE_FILENAME = "qmmf-server.service"
-QMMF_SERVICE_FILENAME_qcs605 = "qmmf-server-qcs605.service"
-QMMF_SERVICE_FILENAME_sdmsteppe = "qmmf-server-sdmsteppe.service"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
@@ -71,7 +68,6 @@ FILES_SOLIBSDEV = ""
 do_install_append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}/etc/systemd/system/
-        install -m 0644 ${WORKDIR}/${QMMF_SERVICE_FILENAME}  -D ${D}/etc/systemd/system/qmmf-server.service
         install -d ${D}/etc/systemd/system/multi-user.target.wants/
         # enable the service for multi-user.target
         ln -sf /etc/systemd/qmmf-server.service \
@@ -82,8 +78,6 @@ do_install_append () {
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/${userfsdatadir}/misc/vam
 }
-
-PACKAGES =+ "${PN}-qmmf-server"
 
 FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
 FILES_${PN}-qmmf-server     = "${bindir}/qmmf-server"
