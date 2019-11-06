@@ -1,0 +1,38 @@
+From 02a8ddd4ad5c122c5e6c76c1e5edbd33938381dc Mon Sep 17 00:00:00 2001
+From: "aperez@igalia.com"
+ <aperez@igalia.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+Date: Tue, 25 Sep 2018 14:18:19 +0000
+Subject: [PATCH] Merge r236391 - [ARM] Building FELightingNEON.cpp fails due
+ to missing lightVector member https://bugs.webkit.org/show_bug.cgi?id=189890
+
+Reviewed by Darin Adler.
+
+No new tests needed.
+
+* platform/graphics/cpu/arm/filters/FELightingNEON.h:
+(WebCore::FELighting::platformApplyNeon): Adapt to new layout of "struct PaintingData" after r225122.
+
+git-svn-id: http://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-2.22@236456 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+---
+ .../platform/graphics/cpu/arm/filters/FELightingNEON.h       |  6 +++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+diff --git a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h b/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
+index 42af922..b542a4c 100644
+--- a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
++++ b/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
+@@ -144,9 +144,9 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
+             neonData.flags |= FLAG_CONE_EXPONENT_IS_1;
+     } else {
+         ASSERT(m_lightSource->type() == LS_DISTANT);
+-        floatArguments.lightX = paintingData.lightVector.x();
+-        floatArguments.lightY = paintingData.lightVector.y();
+-        floatArguments.lightZ = paintingData.lightVector.z();
++        floatArguments.lightX = paintingData.initialLightingData.lightVector.x();
++        floatArguments.lightY = paintingData.initialLightingData.lightVector.y();
++        floatArguments.lightZ = paintingData.initialLightingData.lightVector.z();
+         floatArguments.padding2 = 1;
+     }
+ 
+-- 
+2.7.4
+
