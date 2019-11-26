@@ -11,7 +11,7 @@ PR = "r0"
 SSTATE_DUPWHITELIST = "/"
 
 DEPENDS += "${BASE_DEPENDS}"
-DEPENDS += "audiohal"
+DEPENDS += "pulseaudio"
 DEPENDS += "fastcv-noship"
 DEPENDS += "av-frameworks"
 DEPENDS += "media"
@@ -30,14 +30,6 @@ EXTRA_OECMAKE += "-DWORKSPACE=${WORKSPACE}"
 EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
 EXTRA_OECMAKE += "-DQMMF_SDK_INC_DIR=${SRC_DIR}"
 EXTRA_OECMAKE += "-DBUILD_CATEGORY=BASE"
-
-FILES_${PN}-libqmmf_audio_client-dbg    = "${libdir}/.debug/libqmmf_audio_client.*"
-FILES_${PN}-libqmmf_audio_client        = "${libdir}/libqmmf_audio_client.so.*"
-FILES_${PN}-libqmmf_audio_client-dev    = "${libdir}/libqmmf_audio_client.so ${libdir}/libqmmf_audio_client.la ${includedir}"
-
-FILES_${PN}-libqmmf_audio_service-dbg    = "${libdir}/.debug/libqmmf_audio_service.*"
-FILES_${PN}-libqmmf_audio_service        = "${libdir}/libqmmf_audio_service.so.*"
-FILES_${PN}-libqmmf_audio_service-dev    = "${libdir}/libqmmf_audio_service.so ${libdir}/libqmmf_audio_service.la ${includedir}"
 
 FILES_${PN}-libcamera_adaptor-dbg    = "${libdir}/.debug/libcamera_adaptor.*"
 FILES_${PN}-libcamera_adaptor        = "${libdir}/libcamera_adaptor.so.*"
