@@ -1,0 +1,18 @@
+# Based on the user unit
+
+[Unit]
+Description=PulseAudio Sound Service
+#Requires=volatile-var-lib-pulse.service
+After=volatile-var-lib-pulse.service
+
+[Service]
+# Note that notify will only work if --daemonize=no
+Type=notify
+# The below ExecStartPre operation is needed as pulseaudio is not permitted "dac_read_search" permission
+# should find a better way to deal with this maybe
+ExecStartPre=/bin/chmod 744 /var/lib/pulse
+ExecStart=/usr/bin/pulseaudio --system --daemonize=no -vvvv
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
