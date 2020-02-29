@@ -27,7 +27,7 @@ DEPENDS += "libion"
 DEPENDS += "liblog"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qmmf-wayland', 'wayland-native weston', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland-native weston', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
 
