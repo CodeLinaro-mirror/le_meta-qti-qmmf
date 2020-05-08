@@ -187,7 +187,7 @@ USERADD_PACKAGES = "pulseaudio-server"
 GROUPADD_PARAM_pulseaudio-server = "-g 5020 pulse"
 USERADD_PARAM_pulseaudio-server = "--system --home /var/run/pulse \
                               --no-create-home --shell /bin/false \
-                              --groups audio,pulse,input,plugdev --gid pulse pulse"
+                              --groups audio,pulse,input,plugdev,diag --gid pulse pulse"
 
 # The console-kit module is included here explicitly so bitbake can map to the
 # RDEPENDS we define for it in this recipe, and thereby ensure that when
