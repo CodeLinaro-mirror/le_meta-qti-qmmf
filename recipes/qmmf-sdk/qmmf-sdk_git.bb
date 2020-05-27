@@ -72,7 +72,7 @@ do_install_append () {
         install -d ${D}/etc/systemd/system/
         install -d ${D}/etc/systemd/system/multi-user.target.wants/
         # enable the service for multi-user.target
-        ln -sf /etc/systemd/qmmf-server.service \
+        ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
     fi
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
