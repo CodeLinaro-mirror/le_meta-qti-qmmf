@@ -35,7 +35,7 @@ Group=qmmfwebsvr
 Restart=always
 Environment=LD_LIBRARY_PATH=/usr/lib/
 Environment=ADSP_LIBRARY_PATH=/usr/lib/
-Environment=XDG_RUNTIME_DIR=/run/user/root
+Environment=XDG_RUNTIME_DIR=/data/misc/qmmf/
 ExecStart=/usr/bin/qmmf-webserver
 
 [Install]
