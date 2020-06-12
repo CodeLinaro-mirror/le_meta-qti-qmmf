@@ -45,7 +45,7 @@ PACKAGECONFIG[jpeg] = " -D_ENABLE_JPEG=true, -D_ENABLE_JPEG=false,,"
 SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 
 # Data folder for qmmf sdk
-QMMF_DATA = "${userfsdatadir}/misc/qmmf"
+QMMF_DATA = "/data/misc/qmmf"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
@@ -79,13 +79,13 @@ do_install_append () {
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
-    install -d ${D}/${userfsdatadir}/misc/vam
+    install -d ${D}/data/misc/qmmf
 }
 
 FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
 FILES_${PN}-qmmf-server     = "${bindir}/qmmf-server"
 FILES_${PN}-qmmf-server    += "/etc/systemd/system/"
-FILES_${PN}-qmmf-server    += "${userfsdatadir}/*"
+FILES_${PN}-qmmf-server    += "/data/*"
 FILES_${PN}-qmmf-server    += "/mnt/sdcard/data/misc/qmmf/"
 
 FILES_${PN}-libqmmf_recorder_client-dbg    = "${libdir}/.debug/libqmmf_recorder_client.*"
@@ -116,7 +116,8 @@ FILES_${PN}-libav_codec-dbg    = "${libdir}/.debug/libav_codec.*"
 FILES_${PN}-libav_codec        = "${libdir}/libav_codec.so.*"
 FILES_${PN}-libav_codec-dev    = "${libdir}/libav_codec.so ${libdir}/libav_codec.la ${includedir}"
 
-FILES_${PN} += "${userfsdatadir}/misc/qmmf/*.json"
+FILES_${PN} += "/data/misc/qmmf/*.json"
+FILES_${PN} += "/data/*"
 
 INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
 do_configure[depends] += "virtual/kernel:do_shared_workdir"
