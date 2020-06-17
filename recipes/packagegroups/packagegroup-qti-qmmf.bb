@@ -16,6 +16,5 @@ RDEPENDS_packagegroup-qti-qmmf = ' \
 '
 
 RDEPENDS_packagegroup-qti-qmmf-sdk = ' \
-    jsoncpp \
     qmmf-sdk \
 '

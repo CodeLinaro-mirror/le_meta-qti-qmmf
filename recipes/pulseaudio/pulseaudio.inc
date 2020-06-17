@@ -172,6 +172,9 @@ do_install_append() {
 	if [ ${BASEMACHINE} == "apq8009" ] ; then
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
+	if [ ${BASEMACHINE} == "qrb5165" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+	fi
 
 	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
 		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
@@ -298,7 +301,7 @@ RDEPENDS_pulseaudio-server += "\
 EXTRA_OECONF += "--disable-gsettings"
 
 # Explicitly add Bluetooth support coming in from bt-daemon
-PACKAGECONFIG_append += "bluez5"
+#PACKAGECONFIG_append += "bluez5"
 
 # Explicitly create this directory for the volatile bind mount to work
 FILES_${PN}-server += "/var/lib/pulse"
@@ -335,6 +338,18 @@ DEPENDS_append_apq8009 = " qsthw qsthw-api"
 EXTRA_OECONF_append_apq8009 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
 RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-qsthw"
 RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-dbus-protocol"
+
+# Build the qahw module on qrb5165
+DEPENDS_append_qrb5165 = " qahw audiohal"
+EXTRA_OECONF_append_qrb5165 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF_append_qrb5165 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qahw-card"
+
+# Build the qsthw module on qrb5165
+DEPENDS_append_qrb5165 = " qsthw qsthw-api"
+EXTRA_OECONF_append_qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qsthw"
+RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-dbus-protocol"
 
 FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
 

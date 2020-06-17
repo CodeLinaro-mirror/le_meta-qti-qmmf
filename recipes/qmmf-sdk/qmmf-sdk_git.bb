@@ -21,12 +21,13 @@ DEPENDS += "cairo"
 DEPENDS += "glib-2.0"
 DEPENDS += "gtest"
 DEPENDS += "jpeg"
-DEPENDS += "jsoncpp"
 DEPENDS += "libcutils"
 DEPENDS += "libion"
 DEPENDS += "liblog"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)}"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
+DEPENDS_append_sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
+DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland-native weston', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
@@ -46,7 +47,9 @@ SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 # Data folder for qmmf sdk
 QMMF_DATA = "${userfsdatadir}/misc/qmmf"
 
-EXTRA_OECMAKE += "${BASE_EXTRAS_CMAKE}"
+EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
+EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
+EXTRA_OECMAKE += "-DKERNEL_INCDIR=${STAGING_KERNEL_BUILDDIR}"
 EXTRA_OECMAKE += "-DWORKSPACE=${WORKSPACE}"
 EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
 EXTRA_OECMAKE += "-DQMMF_DATA=${QMMF_DATA}"
@@ -70,7 +73,7 @@ do_install_append () {
         install -d ${D}/etc/systemd/system/
         install -d ${D}/etc/systemd/system/multi-user.target.wants/
         # enable the service for multi-user.target
-        ln -sf /etc/systemd/qmmf-server.service \
+        ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
     fi
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
