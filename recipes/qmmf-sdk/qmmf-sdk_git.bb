@@ -62,6 +62,7 @@ FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
+SRC_URI  += "file://qmmf-server-env"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -80,6 +81,7 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
+    install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
 }
 
 FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"

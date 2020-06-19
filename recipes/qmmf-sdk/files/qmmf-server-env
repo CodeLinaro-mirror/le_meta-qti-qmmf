@@ -1,0 +1,2 @@
+LD_LIBRARY_PATH=/usr/lib/camera/components/:/usr/lib/camera/
+XDG_RUNTIME_DIR=/dev/socket/weston
