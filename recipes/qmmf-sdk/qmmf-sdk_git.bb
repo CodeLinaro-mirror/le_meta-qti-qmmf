@@ -36,13 +36,14 @@ PACKAGECONFIG ??= " \
 ${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'audio', '', d)} \
 ${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'avcodec', '', d)} \
 ${@bb.utils.contains('DISTRO_FEATURES', 'jpeg', 'jpeg', '', d)} \
+${@bb.utils.contains('TARGET_ARCH', 'arm', 'neonresizer', '', d)} \
 "
 
 PACKAGECONFIG[audio] = " -D_ENABLE_AUDIO=true, -D_ENABLE_AUDIO=false,,"
 PACKAGECONFIG[avcodec] = " -D_ENABLE_AVCODEC=true, -D_ENABLE_AVCODEC=false,,"
 PACKAGECONFIG[jpeg] = " -D_ENABLE_JPEG=true, -D_ENABLE_JPEG=false,,"
+PACKAGECONFIG[neonresizer] = "-DRESIZER_NEON_ENABLED=1, -DRESIZER_NEON_ENABLED=0"
 
-SRC_DIR = "${WORKSPACE}/vendor/qcom/opensource/qmmf-sdk"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
@@ -123,3 +124,5 @@ FILES_${PN} += "/data/*"
 
 INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
 do_configure[depends] += "virtual/kernel:do_shared_workdir"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
