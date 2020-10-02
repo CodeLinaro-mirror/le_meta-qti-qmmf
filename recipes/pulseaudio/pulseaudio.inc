@@ -62,7 +62,7 @@ DEPENDS = "libatomic-ops libsndfile1 libtool intltool-native"
 DEPENDS += "udev alsa-lib glib-2.0"
 DEPENDS += "speexdsp libxml-parser-perl-native libcap"
 
-inherit autotools bash-completion pkgconfig useradd gettext perlnative bluetooth systemd manpages
+inherit autotools bash-completion pkgconfig useradd gettext perlnative systemd manpages
 
 # *.desktop rules wont be generated during configure and build will fail
 # if using --disable-nls
@@ -98,7 +98,7 @@ EXTRA_OECONF += "--without-fftw"
 # very good anyway, better alternatives exist (such as the webrtc canceller).
 EXTRA_OECONF += "--disable-adrian-aec"
 
-#PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${BLUEZ}', '', d)} \
+#PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', bb.utils.contains('DISTRO_FEATURES', 'bluez5', 'bluez5', 'bluez4', d), '', d)} \
 #                   ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
 #                   ${@bb.utils.contains('DISTRO_FEATURES', '3g', 'ofono', '', d)} \
 #                   ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6 systemd x11', d)} \
