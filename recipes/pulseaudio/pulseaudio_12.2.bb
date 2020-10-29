@@ -1,4 +1,4 @@
-require pulseaudio.inc
+require pulseaudio_12.2.inc
 
 FILESPATH =+ "${WORKSPACE}/:"
 SRC_URI = "file://external/pulseaudio/ \
