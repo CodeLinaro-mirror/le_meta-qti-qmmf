@@ -64,6 +64,7 @@ SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
+SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -82,7 +83,11 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
-    install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
+    if [ ${BASEMACHINE} == "qrb5165" ] ; then
+        install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
+    else
+        install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
+    fi
 }
 
 FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
