@@ -65,6 +65,7 @@ SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
 SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
+SRC_URI_append_qrb5165  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -78,6 +79,12 @@ do_install_append () {
         # enable the service for multi-user.target
         ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
+        if [ ${BASEMACHINE} == "qrb5165" ] ; then
+            install -m 0644 ${WORKDIR}/camera_cgroup.service -D ${D}/etc/systemd/system/camera_cgroup.service
+            ln -sf /etc/systemd/system/camera_cgroup.service \
+               ${D}/etc/systemd/system/multi-user.target.wants/camera_cgroup.service
+        fi
+
     fi
     install -m 0750 ${WORKDIR}/recorder_boottest.sh -D ${D}/${sysconfdir}/init.d/recorder_boottest.sh
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
