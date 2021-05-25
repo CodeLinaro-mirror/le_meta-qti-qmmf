@@ -1,0 +1,2 @@
+LD_LIBRARY_PATH=/usr/lib64/camera/components/:/usr/lib64/camera/
+XDG_RUNTIME_DIR=/run/user/0

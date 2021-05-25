@@ -24,6 +24,7 @@ DEPENDS += "jpeg"
 DEPENDS += "libcutils"
 DEPENDS += "libion"
 DEPENDS += "liblog"
+DEPENDS += "fastcv-noship"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)}"
 DEPENDS_append_sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
@@ -31,12 +32,14 @@ DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera',
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland-native weston', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
+DEPENDS += "media media-headers"
+DEPENDS_append_sm8250 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS_append_sm8250 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 PACKAGECONFIG ??= " \
-${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'audio', '', d)} \
-${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'avcodec', '', d)} \
-${@bb.utils.contains('DISTRO_FEATURES', 'jpeg', 'jpeg', '', d)} \
-${@bb.utils.contains('TARGET_ARCH', 'arm', 'neonresizer', '', d)} \
+	"audio" \
+	"avcodec" \
+	"jpeg" \
 "
 
 PACKAGECONFIG[audio] = " -D_ENABLE_AUDIO=true, -D_ENABLE_AUDIO=false,,"
@@ -66,6 +69,7 @@ SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
 SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
 SRC_URI_append_qrb5165  += "file://camera_cgroup.service"
+SRC_URI_append_sm8250   += "file://qmmf-server-env_sm8250"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -92,6 +96,9 @@ do_install_append () {
     install -d ${D}/data/misc/qmmf
     if [ ${BASEMACHINE} == "qrb5165" ] ; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
+    elif [ ${BASEMACHINE} == "sm8250" ] ; then
+        install ${WORKDIR}/qmmf-server-env_sm8250 -D ${D}/${sysconfdir}/qmmf-server-env
+        mv ${D}/usr/lib ${D}/${libdir}
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
     fi
