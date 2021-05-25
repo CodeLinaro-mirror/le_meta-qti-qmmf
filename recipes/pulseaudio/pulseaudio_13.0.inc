@@ -52,17 +52,24 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=0e5cd938de1a7a53ea5adac38cc10c39 \
                     file://src/pulsecore/resampler.h;beginline=4;endline=21;md5=09794012ae16912c0270f3280cc8ff84 \
                     file://src/modules/reserve.h;beginline=6;endline=28;md5=0e23094760367d51b6609750e9b31fbb \
                     file://src/pulsecore/rtkit.h;beginline=6;endline=29;md5=3f00ff966716ae0817c31576d1473528 \
-                    file://src/utils/qpaeq;beginline=2;endline=16;md5=007ebb0f6af74c67358fdf8d589d741c \
                     file://src/modules/echo-cancel/adrian-aec.h;beginline=3;endline=12;md5=d3ed4fad1c073f8b06f37495dc5d1026 \
                     file://src/pulsecore/filter/biquad.h;beginline=1;endline=4;md5=6d46d1365206528a20137355924233c1 \
 "
 
-DEPENDS = "libatomic-ops libsndfile1 libtool intltool-native"
+DEPENDS = "libatomic-ops libsndfile1 libtool"
 # optional
 DEPENDS += "udev alsa-lib glib-2.0"
 DEPENDS += "speexdsp libxml-parser-perl-native libcap"
 
-inherit autotools bash-completion pkgconfig useradd gettext perlnative bluetooth systemd manpages
+inherit autotools bash-completion pkgconfig useradd gettext perlnative systemd manpages gsettings
+
+# When compiling for Thumb or Thumb2, frame pointers _must_ be disabled since the
+# Thumb frame pointer in r7 clashes with pulseaudio's use of inline asm to make syscalls
+# (where r7 is used for the syscall NR). In most cases, frame pointers will be
+# disabled automatically due to the optimisation level, but append an explicit
+# -fomit-frame-pointer to handle cases where optimisation is set to -O0 or frame
+# pointers have been enabled by -fno-omit-frame-pointer earlier in CFLAGS, etc.
+CFLAGS_append_arm = " ${@bb.utils.contains('TUNE_CCARGS', '-mthumb', '-fomit-frame-pointer', '', d)}"
 
 # *.desktop rules wont be generated during configure and build will fail
 # if using --disable-nls
@@ -77,8 +84,9 @@ EXTRA_OECONF = "\
 		--with-database=simple \
 		--without-zsh-completion-dir \
 		--with-udev-rules-dir=`pkg-config --variable=udevdir udev`/rules.d \
-                ac_cv_header_valgrind_memcheck_h=no \
-                --disable-tests \
+		ac_cv_header_valgrind_memcheck_h=no \
+		--disable-tests \
+		--disable-running-from-build-tree \
 "
 
 # soxr (the SoX Resampler library) doesn't seem to be currently packaged in
@@ -98,23 +106,18 @@ EXTRA_OECONF += "--without-fftw"
 # very good anyway, better alternatives exist (such as the webrtc canceller).
 EXTRA_OECONF += "--disable-adrian-aec"
 
-#PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${BLUEZ}', '', d)} \
-#                   ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
-#                   ${@bb.utils.contains('DISTRO_FEATURES', '3g', 'ofono', '', d)} \
-#                   ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6 systemd x11', d)} \
-#                   dbus \
-#                   "
-
-PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
+PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5', '', d)} \
+                   ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', '3g', 'ofono', '', d)} \
                    ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6 systemd x11', d)} \
-                   dbus \
+                   dbus gsettings \
                    "
 
 PACKAGECONFIG[dbus] = "--enable-dbus,--disable-dbus,dbus"
-#PACKAGECONFIG[bluez4] = "--enable-bluez4,--disable-bluez4,bluez4 sbc"
-#PACKAGECONFIG[bluez5] = "--enable-bluez5,--disable-bluez5,bluez5 sbc"
-#PACKAGECONFIG[ofono] = "--enable-bluez5-ofono-headset,--disable-bluez5-ofono-headset,ofono"
+PACKAGECONFIG[bluez5] = "--enable-bluez5,--disable-bluez5,bluez5 sbc"
+PACKAGECONFIG[gconf] = "--enable-gconf,--disable-gconf,gconf"
+PACKAGECONFIG[gsettings] = "--enable-gsettings,--disable-gsettings,glib-2.0-native glib-2.0"
+PACKAGECONFIG[ofono] = "--enable-bluez5-ofono-headset,--disable-bluez5-ofono-headset,ofono"
 PACKAGECONFIG[gtk] = "--enable-gtk3,--disable-gtk3,gtk+3"
 PACKAGECONFIG[systemd] = "--enable-systemd-daemon --enable-systemd-login --enable-systemd-journal --with-systemduserunitdir=${systemd_user_unitdir},--disable-systemd-daemon --disable-systemd-login --disable-systemd-journal,systemd"
 PACKAGECONFIG[x11] = "--enable-x11,--disable-x11,virtual/libx11 libxtst libice libsm libxcb"
@@ -155,46 +158,30 @@ do_compile_append () {
 do_install_append() {
 	install -d ${D}${sysconfdir}/default/volatiles
 	install -m 0644 ${WORKDIR}/volatiles.04_pulse  ${D}${sysconfdir}/default/volatiles/volatiles.04_pulse
-
-	install -d ${D}/var/lib/pulse
-
-	install -d ${D}${systemd_system_unitdir}
-	install -m 0644 ${WORKDIR}/pulseaudio.service ${D}${systemd_system_unitdir}
-	install -d ${D}${systemd_system_unitdir}/multi-user.target.wants/
-	# enable the service for multi-user.target
-	ln -sf ${systemd_system_unitdir}/pulseaudio.service \
-	       ${D}${systemd_system_unitdir}/multi-user.target.wants/pulseaudio.service
-	install -m 0644 ${WORKDIR}/volatile-var-lib-pulse.service ${D}${systemd_system_unitdir}
-
-	if [ ${BASEMACHINE} == "sdmsteppe" ] ; then
-		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
-	fi
-	if [ ${BASEMACHINE} == "apq8009" ] ; then
-		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
-	fi
-
-	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
-		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
-		install -d ${D}${includedir}/${i}
-		install -m 0644 ${S}/src/${i}/*.h ${D}${includedir}/${i}/
-	done
-	# not really the expected path for config.h but we can't just
-	# put it ${includedir}, it's too generic a name.
-	install -m 0644 ${WORKDIR}/build/config.h ${D}${includedir}/pulsecore
 }
 
 USERADD_PACKAGES = "pulseaudio-server"
-GROUPADD_PARAM_pulseaudio-server = "-g 5020 pulse"
+GROUPADD_PARAM_pulseaudio-server = "--system pulse"
 USERADD_PARAM_pulseaudio-server = "--system --home /var/run/pulse \
                               --no-create-home --shell /bin/false \
-                              --groups audio,pulse,input,plugdev --gid pulse pulse"
+                              --groups audio,pulse --gid pulse pulse"
+
+PACKAGES =+ "\
+             libpulse \
+             libpulse-mainloop-glib \
+             libpulse-simple \
+             libpulsecommon \
+             libpulsecore \
+             ${PN}-pa-info \
+             ${PN}-server \
+             ${PN}-misc \
+             "
 
 # The console-kit module is included here explicitly so bitbake can map to the
 # RDEPENDS we define for it in this recipe, and thereby ensure that when
 # adding the console-kit module to an image, we also get the necessary
 # consolekit package produced.
-PACKAGES =+ "libpulsecore libpulsecore-dev libpulsecommon libpulse libpulse-simple libpulse-mainloop-glib \
-             pulseaudio-server pulseaudio-misc ${@bb.utils.contains('PACKAGECONFIG', 'dbus', 'pulseaudio-module-console-kit', '', d)}"
+PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'dbus', 'pulseaudio-module-console-kit', '', d)}"
 
 #upgrade path:
 RREPLACES_pulseaudio-server = "libpulse-bin libpulse-conf"
@@ -202,7 +189,6 @@ RREPLACES_pulseaudio-server = "libpulse-bin libpulse-conf"
 PACKAGES_DYNAMIC += "^pulseaudio-lib-.* ^pulseaudio-module-.*"
 
 FILES_libpulsecore = "${libdir}/pulseaudio/libpulsecore*.so"
-FILES_libpulsecore-dev = "${includedir}/pulsecore/*"
 FILES_libpulsecommon = "${libdir}/pulseaudio/libpulsecommon*.so"
 
 # client.conf configures the behaviour of libpulse, so it belongs in the same
@@ -212,22 +198,24 @@ FILES_libpulse = "${libdir}/libpulse.so.* ${sysconfdir}/pulse/client.conf"
 FILES_libpulse-simple = "${libdir}/libpulse-simple.so.*"
 FILES_libpulse-mainloop-glib = "${libdir}/libpulse-mainloop-glib.so.*"
 
-FILES_${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}/cmake"   
+FILES_${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}/cmake"
 FILES_${PN}-conf = "${sysconfdir}"
 FILES_${PN}-bin += "${sysconfdir}/default/volatiles/volatiles.04_pulse"
+FILES_${PN}-pa-info = "${bindir}/pa-info"
 FILES_${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/pactl */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
 
-SYSTEMD_PACKAGES = "${PN}-server"
+#SYSTEMD_PACKAGES = "${PN}-server"
 SYSTEMD_SERVICE_${PN}-server = "pulseaudio.service"
 
 FILES_${PN}-misc = "${bindir}/* ${libdir}/pulseaudio/libpulsedsp.so"
 
 # Allow the pulseaudio package to be created empty as a placeholder (-dbg and -dev depend on it)
+FILES_${PN} = ""
 ALLOW_EMPTY_${PN} = "1"
 
 CONFFILES_libpulse = "${sysconfdir}/pulse/client.conf"
 
-CONFFILES_pulseaudio-server = "\ 
+CONFFILES_pulseaudio-server = "\
   ${sysconfdir}/pulse/default.pa \
   ${sysconfdir}/pulse/daemon.conf \
   ${sysconfdir}/pulse/system.pa \
@@ -240,12 +228,20 @@ pkg_postinst_${PN}-server() {
 }
 
 python populate_packages_prepend() {
-    #d.setVar('PKG_pulseaudio', 'pulseaudio')
-
     plugindir = d.expand('${libdir}/pulse-${PV}/modules/')
-    do_split_packages(d, plugindir, '^module-(.*)\.so$', 'pulseaudio-module-%s', 'PulseAudio module for %s', extra_depends='', prepend=True)
-    do_split_packages(d, plugindir, '^lib(.*)\.so$', 'pulseaudio-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
+    do_split_packages(d, plugindir, r'^module-(.*)\.so$', '${PN}-module-%s', 'PulseAudio module for %s', extra_depends='', prepend=True)
+    do_split_packages(d, plugindir, r'^lib(.*)\.so$', '${PN}-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
 }
+
+# pa-info is a bash script that collects information about the audio setup.
+# It's primarily useful for attaching an information dump when reporting bugs.
+RDEPENDS_${PN}-pa-info = "\
+                          alsa-utils-amixer \
+                          alsa-utils-aplay \
+                          alsa-utils-scripts \
+                          bash \
+                          ${PN}-server \
+                          "
 
 RDEPENDS_pulseaudio-server = " \
     pulseaudio-module-filter-apply \
@@ -280,7 +276,11 @@ RDEPENDS_pulseaudio-server += "alsa-plugins-pulseaudio-conf"
 RDEPENDS_pulseaudio-module-console-kit =+ "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'consolekit', '', d)}"
 RDEPENDS_pulseaudio-misc += "pulseaudio-module-cli-protocol-unix"
 
-FILES_pulseaudio-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
+FILES_${PN}-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
+FILES_${PN}-module-gconf += "${libexecdir}/pulse/gconf-helper"
+
+GSETTINGS_PACKAGE = "${@bb.utils.contains('PACKAGECONFIG', 'gsettings', '${PN}-module-gsettings', '', d)}"
+FILES_${PN}-module-gsettings += "${libexecdir}/pulse/gsettings-helper ${datadir}/GConf/gsettings ${datadir}/glib-2.0/schemas"
 
 # The console-kit module is good to have on X11 systems (it keeps PulseAudio
 # running for the duration of the user login session). The device-manager and
@@ -288,53 +288,12 @@ FILES_pulseaudio-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
 # modules must be installed when X11 is enabled.
 RDEPENDS_pulseaudio-server += "\
         ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '\
-                pulseaudio-module-console-kit \
                 pulseaudio-module-device-manager \
                 pulseaudio-module-x11-cork-request \
                 pulseaudio-module-x11-publish \
                 pulseaudio-module-x11-xsmp \
         ', '', d)}"
 
-EXTRA_OECONF += "--disable-gsettings"
-
-# Explicitly add Bluetooth support coming in from bt-daemon
-PACKAGECONFIG_append += "bluez5"
-
-# Explicitly create this directory for the volatile bind mount to work
-FILES_${PN}-server += "/var/lib/pulse"
-
-# systemd service to bind mount a writable /var/lib/pulse
-SYSTEMD_SERVICE_${PN}-server += "volatile-var-lib-pulse.service"
-
-do_configure_prepend() {
-	# The repo checkout does not pull tags, so we need this to avoid
-	# git-version-gen failure
-	export GIT_DESCRIBE_FOR_BUILD="${PV}"
-}
-
-# Build the qahw module on sdmsteppe when 32-bit
-DEPENDS_append_sdmsteppe = " qahw audiohal"
-EXTRA_OECONF_append_sdmsteppe += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
-EXTRA_OECONF_append_sdmsteppe += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qahw-card"
-
-# Build the qsthw module on sdmsteppe when 32-bit
-DEPENDS_append_sdmsteppe = " qsthw qsthw-api"
-EXTRA_OECONF_append_sdmsteppe += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qsthw"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-dbus-protocol"
-
-# Build the qahw module on apq8009 when 32-bit
-DEPENDS_append_apq8009 = " qahw audiohal"
-EXTRA_OECONF_append_apq8009 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
-EXTRA_OECONF_append_apq8009 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-qahw-card"
-
-# Build the qsthw module on apq8009 when 32-bit
-DEPENDS_append_apq8009 = " qsthw qsthw-api"
-EXTRA_OECONF_append_apq8009 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-qsthw"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-dbus-protocol"
-
-FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
-
+RDEPENDS_pulseaudio-server += "${@bb.utils.contains('DISTRO_FEATURES', 'x11', \
+                                  bb.utils.contains('DISTRO_FEATURES', 'systemd', 'pulseaudio-module-systemd-login', 'pulseaudio-module-console-kit', d), \
+                                  '', d)}"

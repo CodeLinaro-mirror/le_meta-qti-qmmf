@@ -16,7 +16,6 @@ PR = "r0"
 
 SRC_URI = "git://source.codeaurora.org/quic/la/platform/external/jsoncpp;protocol=http;branch=android-external.lnx.2.0-rel"
 
-#	90c81b9c9aef09ef4ffb8de1779301734336d897
 SRCREV = "90c81b9c9aef09ef4ffb8de1779301734336d897"
 
 S = "${WORKDIR}/git"

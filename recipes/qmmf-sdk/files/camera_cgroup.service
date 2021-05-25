@@ -1,4 +1,4 @@
-# Copyright (c) 2018, 2019, The Linux Foundation. All rights reserved.
+# Copyright (c) 2021, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,15 +26,14 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [Unit]
-Description= QMMF Server Service
-SourcePath=/usr/bin/qmmf-server
+Description= Create Camera Cgroup Service
+Requires=qmmf-server.service
+After=qmmf-server.service
 
 [Service]
-User=qmmfsvr
-Group=qmmfsvr
-Restart=always
-Environment=LD_LIBRARY_PATH=/usr/lib/camera/components/:/usr/lib/camera/
-ExecStart=/usr/bin/qmmf-server
+Type=oneshot
+RemainAfterExit=yes
+ExecStart= /bin/sh -c " mkdir -p /sys/fs/cgroup/schedtune/camera; chown -R qmmfsvr:qmmfsvr /sys/fs/cgroup/schedtune/camera; exit 1; "
 
 [Install]
 WantedBy=multi-user.target
