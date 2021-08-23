@@ -7,6 +7,7 @@ PROVIDES = "${PACKAGES}"
 
 PACKAGES = ' \
     ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio", bb.utils.contains("COMBINED_FEATURES", "qti-audio", "packagegroup-qti-pulseaudio", "", d), "", d)} \
+    ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio", bb.utils.contains("BASEMACHINE", "sxr2130", "packagegroup-qti-pulseaudio", "", d), "", d)} \
 '
 
 RDEPENDS_packagegroup-qti-pulseaudio = ' \
