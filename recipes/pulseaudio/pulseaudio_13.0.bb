@@ -40,6 +40,10 @@ do_install_append() {
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
 
+        if [ ${BASEMACHINE} == "sxr2130" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+        fi
+
 	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
 		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
 		install -d ${D}${includedir}/${i}
@@ -75,5 +79,12 @@ EXTRA_OECONF_append_qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_a
 RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qsthw"
 RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-dbus-protocol"
 
+# Build the pal module on sxr2130
+DEPENDS_append_sxr2130 = " qal"
+EXTRA_OECONF_append_sxr2130 += " --with-qal=${STAGING_INCDIR}/pal"
+RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-qal-card"
+RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-dbus-protocol"
+
 FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
+FILES_${PN}-module-qal-card += "${datadir}/pulseaudio/qal"
 FILES_${PN} = "${datadir}/* ${libdir}/* ${sysconfdir}/* ${bindir}/* ${base_libdir}/* ${prefix}/libexec/"
