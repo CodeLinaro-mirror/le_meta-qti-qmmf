@@ -89,6 +89,8 @@ EXTRA_OECONF = "\
 		--disable-running-from-build-tree \
 "
 
+EXTRA_OECONF_append_qrbx210 += "ADAPT_HAL_API_UPDATE_DEVICE_LIST=true"
+
 # soxr (the SoX Resampler library) doesn't seem to be currently packaged in
 # oe-core nor meta-oe, so let's not add a PACKAGECONFIG entry for it for now.
 EXTRA_OECONF += "--without-soxr"
