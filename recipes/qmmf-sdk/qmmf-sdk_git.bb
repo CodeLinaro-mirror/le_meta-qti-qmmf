@@ -28,6 +28,8 @@ DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', 
 DEPENDS_append_sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland-native weston', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
@@ -66,6 +68,8 @@ SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
 SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
 SRC_URI_append_qrb5165  += "file://camera_cgroup.service"
+SRC_URI_append_qrbx210  += "file://qmmf-server-env_qrb5165"
+SRC_URI_append_qrbx210  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -79,7 +83,7 @@ do_install_append () {
         # enable the service for multi-user.target
         ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
-        if [ ${BASEMACHINE} == "qrb5165" ] ; then
+        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
             install -m 0644 ${WORKDIR}/camera_cgroup.service -D ${D}/etc/systemd/system/camera_cgroup.service
             ln -sf /etc/systemd/system/camera_cgroup.service \
                ${D}/etc/systemd/system/multi-user.target.wants/camera_cgroup.service
@@ -90,7 +94,7 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
-    if [ ${BASEMACHINE} == "qrb5165" ] ; then
+    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
