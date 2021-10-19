@@ -12,40 +12,22 @@ SSTATE_DUPWHITELIST = "/"
 
 REQUIRED_DISTRO_FEATURES += "qti-camera"
 REQUIRED_DISTRO_FEATURES += "qti-qmmf"
-REQUIRED_DISTRO_FEATURES += "qti-video"
 
 # Required Dependencies for qmmf-sdk
 
 DEPENDS += "binder"
-DEPENDS += "cairo"
 DEPENDS += "glib-2.0"
 DEPENDS += "gtest"
-DEPENDS += "jpeg"
 DEPENDS += "libcutils"
-DEPENDS += "libion"
 DEPENDS += "liblog"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)}"
+DEPENDS += "gbm"
 DEPENDS_append_sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland-native weston', '', d)}"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-qmmf-legacy', 'system-core av-frameworks', '', d)}"
-DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'media media-headers', '', d)}"
 
-PACKAGECONFIG ??= " \
-${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'audio', '', d)} \
-${@bb.utils.contains('DISTRO_FEATURES', 'qti-video', 'avcodec', '', d)} \
-${@bb.utils.contains('DISTRO_FEATURES', 'jpeg', 'jpeg', '', d)} \
-${@bb.utils.contains('TARGET_ARCH', 'arm', 'neonresizer', '', d)} \
-"
-
-PACKAGECONFIG[audio] = " -D_ENABLE_AUDIO=true, -D_ENABLE_AUDIO=false,,"
-PACKAGECONFIG[avcodec] = " -D_ENABLE_AVCODEC=true, -D_ENABLE_AVCODEC=false,,"
-PACKAGECONFIG[jpeg] = " -D_ENABLE_JPEG=true, -D_ENABLE_JPEG=false,,"
-PACKAGECONFIG[neonresizer] = "-DRESIZER_NEON_ENABLED=1, -DRESIZER_NEON_ENABLED=0"
-
+RDEPENDS_${PN} = "gbm"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
@@ -53,10 +35,6 @@ QMMF_DATA = "/data/misc/qmmf"
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
 EXTRA_OECMAKE += "-DKERNEL_INCDIR=${STAGING_KERNEL_BUILDDIR}"
-EXTRA_OECMAKE += "-DWORKSPACE=${WORKSPACE}"
-EXTRA_OECMAKE += "-DPKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR}"
-EXTRA_OECMAKE += "-DQMMF_DATA=${QMMF_DATA}"
-EXTRA_OECMAKE += "-DQMMF_SDK_INC_DIR=${SRC_DIR}"
 EXTRA_OECMAKE += "-DBUILD_CATEGORY=ALL"
 EXTRA_OECMAKE += "-DTARGET_BOARD_PLATFORM=${BASEMACHINE}"
 EXTRA_OECMAKE += "-DQMMF_SYSTEMD_DIR=${sysconfdir}/systemd/system"
@@ -115,27 +93,10 @@ FILES_${PN}-libqmmf_recorder_service-dbg    = "${libdir}/.debug/libqmmf_recorder
 FILES_${PN}-libqmmf_recorder_service        = "${libdir}/libqmmf_recorder_service.so.*"
 FILES_${PN}-libqmmf_recorder_service-dev    = "${libdir}/libqmmf_recorder_service.so ${libdir}/libqmmf_recorder_service.la ${includedir}"
 
-FILES_${PN}-libqmmf_display_client-dbg    = "${libdir}/.debug/libqmmf_display_client.*"
-FILES_${PN}-libqmmf_display_client        = "${libdir}/libqmmf_display_client.so.*"
-FILES_${PN}-libqmmf_display_client-dev    = "${libdir}/libqmmf_display_client.so ${libdir}/libqmmf_display_client.la ${includedir}"
-
-FILES_${PN}-libqmmf_display_service-dbg    = "${libdir}/.debug/libqmmf_display_service.*"
-FILES_${PN}-libqmmf_display_service        = "${libdir}/libqmmf_display_service.so.*"
-FILES_${PN}-libqmmf_display_service-dev    = "${libdir}/libqmmf_display_service.so ${libdir}/libqmmf_display_service.la ${includedir}"
-
 FILES_${PN}-libcamera_adaptor-dbg    = "${libdir}/.debug/libcamera_adaptor.*"
 FILES_${PN}-libcamera_adaptor        = "${libdir}/libcamera_adaptor.so.*"
 FILES_${PN}-libcamera_adaptor-dev    = "${libdir}/libcamera_adaptor.so ${libdir}/libcamera_adaptor.la ${includedir}"
 
-FILES_${PN}-libcodec_adaptor-dbg    = "${libdir}/.debug/libcodec_adaptor.*"
-FILES_${PN}-libcodec_adaptor        = "${libdir}/libcodec_adaptor.so.*"
-FILES_${PN}-libcodec_adaptor-dev    = "${libdir}/libcodec_adaptor.so ${libdir}/libcodec_adaptor.la ${includedir}"
-
-FILES_${PN}-libav_codec-dbg    = "${libdir}/.debug/libav_codec.*"
-FILES_${PN}-libav_codec        = "${libdir}/libav_codec.so.*"
-FILES_${PN}-libav_codec-dev    = "${libdir}/libav_codec.so ${libdir}/libav_codec.la ${includedir}"
-
-FILES_${PN} += "/data/misc/qmmf/*.json"
 FILES_${PN} += "/data/*"
 
 INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
