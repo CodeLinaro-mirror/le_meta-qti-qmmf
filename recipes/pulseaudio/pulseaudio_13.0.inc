@@ -89,6 +89,8 @@ EXTRA_OECONF = "\
 		--disable-running-from-build-tree \
 "
 
+EXTRA_OECONF_append_qrbx210 += "ADAPT_HAL_API_UPDATE_DEVICE_LIST=true"
+
 # soxr (the SoX Resampler library) doesn't seem to be currently packaged in
 # oe-core nor meta-oe, so let's not add a PACKAGECONFIG entry for it for now.
 EXTRA_OECONF += "--without-soxr"
@@ -202,7 +204,7 @@ FILES_${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}
 FILES_${PN}-conf = "${sysconfdir}"
 FILES_${PN}-bin += "${sysconfdir}/default/volatiles/volatiles.04_pulse"
 FILES_${PN}-pa-info = "${bindir}/pa-info"
-FILES_${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/pactl */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
+FILES_${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/* */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
 
 #SYSTEMD_PACKAGES = "${PN}-server"
 SYSTEMD_SERVICE_${PN}-server = "pulseaudio.service"
