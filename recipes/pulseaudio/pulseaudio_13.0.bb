@@ -43,6 +43,9 @@ do_install_append() {
         if [ ${BASEMACHINE} == "sxr2130" ] ; then
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
         fi
+	if [ ${BASEMACHINE} == "neo" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+	fi
 	if [ ${BASEMACHINE} == "qrbx210" ] ; then
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
