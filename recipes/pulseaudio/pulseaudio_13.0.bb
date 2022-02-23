@@ -97,6 +97,12 @@ EXTRA_OECONF_append_sxr2130 += " --with-qal=${STAGING_INCDIR}/pal"
 RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-qal-card"
 RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-dbus-protocol"
 
+# Build the qal module on neo
+DEPENDS_append_neo = " qal"
+EXTRA_OECONF_append_neo += " --with-qal=${STAGING_INCDIR}/pal"
+RDEPENDS_pulseaudio-server_append_neo += " pulseaudio-module-qal-card pulseaudio-module-qal-voiceui-card"
+RDEPENDS_pulseaudio-server_append_neo += " pulseaudio-module-dbus-protocol"
+
 # Build the qsthw module on qrbx210
 DEPENDS_append_qrbx210 = " qsthw qsthw-api"
 EXTRA_OECONF_append_qrbx210 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
