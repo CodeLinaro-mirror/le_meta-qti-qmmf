@@ -49,6 +49,9 @@ do_install_append() {
 	if [ ${BASEMACHINE} == "qrbx210" ] ; then
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
+	if [ ${BASEMACHINE} == "sdmsteppe" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+	fi
 
 	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
 		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
@@ -85,6 +88,12 @@ EXTRA_OECONF_append_qrbx210 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw
 EXTRA_OECONF_append_qrbx210 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-qahw-card"
 
+# Build the qahw module on sdmsteppe
+DEPENDS_append_sdmsteppe = " qahw audiohal"
+EXTRA_OECONF_append_sdmsteppe += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF_append_sdmsteppe += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qahw-card"
+
 # Build the qsthw module on qrb5165
 DEPENDS_append_qrb5165 = " qsthw qsthw-api"
 EXTRA_OECONF_append_qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
@@ -102,6 +111,12 @@ DEPENDS_append_qrbx210 = " qsthw qsthw-api"
 EXTRA_OECONF_append_qrbx210 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-qsthw"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-dbus-protocol"
+
+# Build the qsthw module on sdmsteppe
+DEPENDS_append_sdmsteppe = " qsthw qsthw-api"
+EXTRA_OECONF_append_sdmsteppe += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qsthw"
+RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-dbus-protocol"
 
 FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
 FILES_${PN}-module-qal-card += "${datadir}/pulseaudio/qal"
