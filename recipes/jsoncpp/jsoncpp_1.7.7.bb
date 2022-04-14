@@ -14,7 +14,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=c56ee55c03a55f8105b969d8270632ce"
 # The revision of the recipe used to build the package.
 PR = "r0"
 
-SRC_URI = "git://source.codeaurora.org/quic/la/platform/external/jsoncpp;protocol=http;branch=android-external.lnx.2.0-rel"
+SRC_URI = "git://git.codelinaro.org/clo/la/platform/external/jsoncpp;protocol=http;branch=caf_migration/android-external.lnx.2.0-rel"
 
 SRCREV = "90c81b9c9aef09ef4ffb8de1779301734336d897"
 
