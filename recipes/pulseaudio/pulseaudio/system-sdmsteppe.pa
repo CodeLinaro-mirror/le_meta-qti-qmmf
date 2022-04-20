@@ -59,7 +59,7 @@ load-module module-rescue-streams
 load-module module-always-sink
 
 ### Automatically suspend sinks/sources that become idle for too long
-load-module module-suspend-on-idle timeout_ms=200
+load-module module-suspend-on-idle timeout=1
 
 ### Enable positioned event sounds
 load-module module-position-event-sounds
