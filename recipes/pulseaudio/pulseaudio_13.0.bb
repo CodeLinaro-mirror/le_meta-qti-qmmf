@@ -28,7 +28,6 @@ do_configure_prepend() {
 }
 
 do_install_append() {
-	install -d ${D}/var/lib/pulse
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/pulseaudio.service ${D}${systemd_system_unitdir}
 	install -d ${D}${systemd_system_unitdir}/multi-user.target.wants/
