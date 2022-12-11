@@ -16,7 +16,7 @@ LDFLAGS += "-lwebsockets -luv"
 
 S = "${WORKDIR}/${PN}"
 
-FILES_${PN} += "rtsp_proxy"
+FILES:${PN} += "rtsp_proxy"
 
 do_compile() {
 	oe_runmake

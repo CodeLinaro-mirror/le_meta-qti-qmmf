@@ -10,11 +10,13 @@ PACKAGES = ' \
     ${@bb.utils.contains("DISTRO_FEATURES", "qti-qmmf", bb.utils.contains("DISTRO_FEATURES", "qti-camera", "packagegroup-qti-qmmf-sdk", "", d), "", d)}  \
 '
 
-RDEPENDS_packagegroup-qti-qmmf = ' \
+RDEPENDS:packagegroup-qti-qmmf = ' \
     ${@bb.utils.contains("DISTRO_FEATURES", "qti-qmmf", bb.utils.contains("DISTRO_FEATURES", "qti-camera", "packagegroup-qti-qmmf-sdk", "", d), "", d)} \
     ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio", bb.utils.contains("DISTRO_FEATURES", "qti-audio", "packagegroup-qti-pulseaudio", "", d), "", d)} \
 '
 
-RDEPENDS_packagegroup-qti-qmmf-sdk = ' \
+RDEPENDS:packagegroup-qti-qmmf-sdk = ' \
     qmmf-sdk \
 '
+
+RDEPENDS:packagegroup-qti-qmmf:remove:kalama = "packagegroup-qti-pulseaudio"
