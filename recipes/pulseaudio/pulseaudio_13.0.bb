@@ -49,6 +49,10 @@ do_install_append() {
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
 
+	if [ ${BASEMACHINE} == "qcs6490" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+	fi
+
 	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
 		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
 		install -d ${D}${includedir}/${i}
@@ -83,6 +87,15 @@ DEPENDS_append_qrbx210 = " qahw audiohal"
 EXTRA_OECONF_append_qrbx210 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
 EXTRA_OECONF_append_qrbx210 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-qahw-card"
+
+# Build the qahw module on qcs6490
+DEPENDS_append_qcs6490 = " qahw audiohal qsthw qsthw-api"
+EXTRA_OECONF_append_qcs6490 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF_append_qcs6490 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-qahw-card"
+EXTRA_OECONF_append_qcs6490 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-qsthw"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-dbus-protocol"
 
 # Build the qsthw module on qrb5165
 DEPENDS_append_qrb5165 = " qsthw qsthw-api"
