@@ -1,10 +1,8 @@
 inherit cmake pkgconfig
 
 DESCRIPTION = "QMMF SDK"
-LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "\
-file://${COMMON_LICENSE_DIR}/${LICENSE};md5=550794465ba0ec5312d6919e203a55f9\
-"
+LICENSE = "BSD-3-Clause-Clear"
+LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/${LICENSE};md5=3771d4920bd6cdb8cbdf1e8344489ee0"
 
 SSTATE_ALLOW_OVERLAP_FILES = "/"
 
