@@ -49,6 +49,10 @@ do_install_append() {
 		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
 	fi
 
+	if [ ${BASEMACHINE} == "qcs6490" ] ; then
+		install -m 0644 ${WORKDIR}/system-${BASEMACHINE}.pa ${D}${sysconfdir}/pulse/system.pa
+	fi
+
 	for i in $(find ${S}/src/pulsecore/ -type d -printf "pulsecore/%P\n"); do
 		[ -n "$(ls ${S}/src/${i}/*.h 2>/dev/null)" ] || continue
 		install -d ${D}${includedir}/${i}
@@ -84,6 +88,15 @@ EXTRA_OECONF_append_qrbx210 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw
 EXTRA_OECONF_append_qrbx210 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-qahw-card"
 
+# Build the qahw module on qcs6490
+DEPENDS_append_qcs6490 = " qahw audiohal qsthw qsthw-api"
+EXTRA_OECONF_append_qcs6490 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF_append_qcs6490 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-qahw-card"
+EXTRA_OECONF_append_qcs6490 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-qsthw"
+RDEPENDS_pulseaudio-server_append_qcs6490 += " pulseaudio-module-dbus-protocol"
+
 # Build the qsthw module on qrb5165
 DEPENDS_append_qrb5165 = " qsthw qsthw-api"
 EXTRA_OECONF_append_qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
@@ -91,9 +104,9 @@ RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qsthw"
 RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-dbus-protocol"
 
 # Build the pal module on sxr2130
-DEPENDS_append_sxr2130 = " qal"
-EXTRA_OECONF_append_sxr2130 += " --with-qal=${STAGING_INCDIR}/pal"
-RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-qal-card"
+DEPENDS_append_sxr2130 = " pal"
+EXTRA_OECONF_append_sxr2130 += " --with-pal=${STAGING_INCDIR}/pal"
+RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-pal-card"
 RDEPENDS_pulseaudio-server_append_sxr2130 += " pulseaudio-module-dbus-protocol"
 
 # Build the qal module on neo
@@ -109,5 +122,5 @@ RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-qsthw"
 RDEPENDS_pulseaudio-server_append_qrbx210 += " pulseaudio-module-dbus-protocol"
 
 FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
-FILES_${PN}-module-qal-card += "${datadir}/pulseaudio/qal"
+FILES_${PN}-module-pal-card += "${datadir}/pulseaudio/pal"
 FILES_${PN} = "${datadir}/* ${libdir}/* ${sysconfdir}/* ${bindir}/* ${base_libdir}/* ${prefix}/libexec/"
