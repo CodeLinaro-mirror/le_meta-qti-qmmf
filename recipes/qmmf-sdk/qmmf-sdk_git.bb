@@ -53,6 +53,7 @@ SRC_URI:append:qrb5165  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qrb5165  += "file://camera_cgroup.service"
 SRC_URI:append:qrbx210  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qrbx210  += "file://camera_cgroup.service"
+SRC_URI:append:kalama   += "file://qmmf-server-env_kalama"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -79,6 +80,8 @@ do_install:append () {
     install -d ${D}/data/misc/qmmf
     if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
+    elif [ ${BASEMACHINE} == "kalama" ]; then
+        install ${WORKDIR}/qmmf-server-env_kalama -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
     fi
