@@ -26,11 +26,15 @@ DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera',
 DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS_append_qcs6490 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS_append_qcs6490 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS_${PN} = "gbm"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
+
+GBM_FREE_FD := "FALSE"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
@@ -39,6 +43,7 @@ EXTRA_OECMAKE += "-DBUILD_CATEGORY=ALL"
 EXTRA_OECMAKE += "-DTARGET_BOARD_PLATFORM=${BASEMACHINE}"
 EXTRA_OECMAKE += "-DTARGET_PRODUCT_PLATFORM=${PRODUCT}"
 EXTRA_OECMAKE += "-DQMMF_SYSTEMD_DIR=${sysconfdir}/systemd/system"
+EXTRA_OECMAKE += "-DGBM_FREE_FD=${GBM_FREE_FD}"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-sdk"
@@ -49,6 +54,8 @@ SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
 SRC_URI_append_qrb5165  += "file://camera_cgroup.service"
 SRC_URI_append_qrbx210  += "file://qmmf-server-env_qrb5165"
 SRC_URI_append_qrbx210  += "file://camera_cgroup.service"
+SRC_URI_append_qcs6490  += "file://qmmf-server-env_qrb5165"
+SRC_URI_append_qcs6490  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -62,7 +69,7 @@ do_install_append () {
         # enable the service for multi-user.target
         ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
-        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcs6490" ]; then
             install -m 0644 ${WORKDIR}/camera_cgroup.service -D ${D}/etc/systemd/system/camera_cgroup.service
             ln -sf /etc/systemd/system/camera_cgroup.service \
                ${D}/etc/systemd/system/multi-user.target.wants/camera_cgroup.service
@@ -73,7 +80,7 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
-    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcs6490" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
