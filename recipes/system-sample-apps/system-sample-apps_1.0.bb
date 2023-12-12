@@ -14,7 +14,7 @@ DEPENDS:append:kalama += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 
 
 FILESPATH =+ "${WORKSPACE}:"
 SRC_URI = "file://vendor/qcom/opensource/system/sample-apps/"
-S = "${WORKDIR}/vendor/qcom/opensource/system/sample-apps/"
+S = "${WORKDIR}/vendor/qcom/opensource/system/sample-apps"
 
 # Install directries.
 INSTALL_BINDIR := "${bindir}"
