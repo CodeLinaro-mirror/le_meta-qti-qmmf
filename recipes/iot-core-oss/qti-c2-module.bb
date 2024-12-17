@@ -10,6 +10,8 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/${LICE
 DEPENDS += "codec2"
 DEPENDS:append:kalama += "media"
 DEPENDS:append:kalama += "media-external"
+DEPENDS:append:pineapple += "media"
+DEPENDS:append:pineapple += "media-external"
 DEPENDS:append:qrb5165 += "media-codec2"
 DEPENDS:append:kalama += "audio-codec2"
 
@@ -26,6 +28,8 @@ INSTALL_INCDIR := "${includedir}"
 CODEC2_CONFIG_VERSION := "1.0"
 CODEC2_CONFIG_VERSION:kalama := "2.0"
 ENABLE_AUDIO_PLUGINS:kalama := "TRUE"
+CODEC2_CONFIG_VERSION:pineapple := "2.0"
+ENABLE_AUDIO_PLUGINS:pineapple := "FALSE"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
