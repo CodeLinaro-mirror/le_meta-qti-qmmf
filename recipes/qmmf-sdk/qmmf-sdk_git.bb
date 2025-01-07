@@ -28,6 +28,8 @@ DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera',
 DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:qcm2290-mtp += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:qcm2290-mtp += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS:${PN} = "gbm"
 
@@ -53,6 +55,8 @@ SRC_URI:append:qrbx210  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qrbx210  += "file://camera_cgroup.service"
 SRC_URI:append:kalama   += "file://qmmf-server-env_kalama"
 SRC_URI:append:pineapple   += "file://qmmf-server-env_pineapple"
+SRC_URI:append:qcm2290-mtp  += "file://qmmf-server-env_qrb5165"
+SRC_URI:append:qcm2290-mtp  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -66,7 +70,7 @@ do_install:append () {
         # enable the service for multi-user.target
         ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
-        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcm2290-mtp" ]; then
             install -m 0644 ${WORKDIR}/camera_cgroup.service -D ${D}/etc/systemd/system/camera_cgroup.service
             ln -sf /etc/systemd/system/camera_cgroup.service \
                ${D}/etc/systemd/system/multi-user.target.wants/camera_cgroup.service
@@ -77,7 +81,7 @@ do_install:append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
-    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcm2290-mtp" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
     elif [ ${BASEMACHINE} == "kalama" ]; then
         install ${WORKDIR}/qmmf-server-env_kalama -D ${D}/${sysconfdir}/qmmf-server-env
