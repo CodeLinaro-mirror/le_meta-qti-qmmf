@@ -8,14 +8,15 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/${LICE
 
 # Dependencies.
 DEPENDS += "codec2"
+DEPENDS:append:qrb5165 += "media-codec2"
 DEPENDS:append:kalama += "media"
 DEPENDS:append:kalama += "media-external"
+DEPENDS:append:kalama += "audio-codec2"
 DEPENDS:append:pineapple += "media"
 DEPENDS:append:pineapple += "media-external"
+DEPENDS:append:pineapple += "audio-codec2"
 DEPENDS:append:qcm2290-mtp += "media"
 DEPENDS:append:qcm2290-mtp += "media-external"
-DEPENDS:append:qrb5165 += "media-codec2"
-DEPENDS:append:kalama += "audio-codec2"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/iot-core-oss/:"
 
@@ -31,7 +32,7 @@ CODEC2_CONFIG_VERSION := "1.0"
 CODEC2_CONFIG_VERSION:kalama := "2.0"
 ENABLE_AUDIO_PLUGINS:kalama := "TRUE"
 CODEC2_CONFIG_VERSION:pineapple := "2.0"
-ENABLE_AUDIO_PLUGINS:pineapple := "FALSE"
+ENABLE_AUDIO_PLUGINS:pineapple := "TRUE"
 CODEC2_CONFIG_VERSION:qcm2290-mtp := "2.0"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
