@@ -36,7 +36,7 @@ EXTRA_OECONF += " --with-exif=${WORKSPACE}/camera/lib/mm-image-codec/qexif"
 EXTRA_OECONF += " --with-omxcore=${WORKSPACE}/camera/lib/mm-image-codec/qomx_core"
 EXTRA_OECONF += " --with-openmax=${WORKSPACE}/frameworks/native/include/media/openmax"
 EXTRA_OECONF += " --with-ion=${PKG_CONFIG_SYSROOT_DIR}/usr/include/ion_headers"
-EXTRA_OECONF_append = " --with-sanitized-headers=${STAGING_KERNEL_BUILDDIR}/usr/include"
+EXTRA_OECONF:append = " --with-sanitized-headers=${STAGING_KERNEL_BUILDDIR}/usr/include"
 
 PACKAGECONFIG[sqlite] = "--with-sqlite,--without-sqlite,sqlite3,"
 
@@ -48,8 +48,8 @@ S = "${WORKDIR}/qmmf-webserver"
 do_package_qa () {
 }
 
-FILES_${PN} = "${libdir}/lib*.so.* ${bindir}/* ${libdir}/pkgconfig/*"
-FILES_${PN}-dev = "${libdir}/lib*.so* ${includedir} ${libdir}/*.la ${libdir}/*.a"
-FILES_${PN}-dbg = "${libdir}/.debug ${bindir}/.debug"
+FILES:${PN} = "${libdir}/lib*.so.* ${bindir}/* ${libdir}/pkgconfig/*"
+FILES:${PN}-dev = "${libdir}/lib*.so* ${includedir} ${libdir}/*.la ${libdir}/*.a"
+FILES:${PN}-dbg = "${libdir}/.debug ${bindir}/.debug"
 PACKAGES = "${PN} ${PN}-dev ${PN}-dbg"
 do_configure[depends] += "virtual/kernel:do_shared_workdir"

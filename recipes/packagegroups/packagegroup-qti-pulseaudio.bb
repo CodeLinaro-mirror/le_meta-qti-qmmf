@@ -9,7 +9,7 @@ PACKAGES = ' \
     ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio", bb.utils.contains("COMBINED_FEATURES", "qti-audio", "packagegroup-qti-pulseaudio", "", d), "", d)} \
 '
 
-RDEPENDS_packagegroup-qti-pulseaudio = ' \
+RDEPENDS:packagegroup-qti-pulseaudio = ' \
     pulseaudio-server \
     pulseaudio-module-loopback \
     pulseaudio-module-null-source \

@@ -18,7 +18,7 @@ LDFLAGS += "-luv"
 
 S = "${WORKDIR}/${PN}"
 
-FILES_${PN} += "discovery"
+FILES:${PN} += "discovery"
 
 do_compile() {
 	oe_runmake

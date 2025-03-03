@@ -8,8 +8,8 @@ ${LICENSE};md5=89aea4e17d99a7cacdbeed46a0096b10"
 DEPENDS := "go-cross-arm"
 DEPENDS += "github.com-gorilla-muxer"
 DEPENDS += "qmmf-support"
-DEPENDS_remove_sdmsteppe = "go-cross-arm"
-DEPENDS_append_sdmsteppe = " go-cross-canadian-arm"
+DEPENDS:remove:sdmsteppe = "go-cross-arm"
+DEPENDS:append:sdmsteppe = " go-cross-canadian-arm"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/:"
 SRC_URI  := "file://qmmf-webserver"
@@ -49,9 +49,9 @@ do_install() {
   install -d ${D}/${userfsdatadir}/misc/qmmf
 }
 
-FILES_${PN} = "${bindir}/qmmf-webserver"
-FILES_${PN} += "/etc/systemd/system/"
-FILES_${PN} += "${userfsdatadir}/*"
+FILES:${PN} = "${bindir}/qmmf-webserver"
+FILES:${PN} += "/etc/systemd/system/"
+FILES:${PN} += "${userfsdatadir}/*"
 
 # Avoid QA Issue: No GNU_HASH in the elf binary
-INSANE_SKIP_${PN} = "ldflags"
+INSANE_SKIP:${PN} = "ldflags"

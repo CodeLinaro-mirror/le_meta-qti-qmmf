@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/${LICE
 # Dependencies.
 DEPENDS := "gstreamer1.0"
 
-DEPENDS_append_sdmsteppe += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
-DEPENDS_append_sdmsteppe += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
+DEPENDS:append:sdmsteppe += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
+DEPENDS:append:sdmsteppe += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
 
 FILESPATH =+ "${WORKSPACE}:"
 SRC_URI = "file://vendor/qcom/opensource/system/sample-apps/"
@@ -32,8 +32,8 @@ EXTRA_OECMAKE += "-DSYSTEM_SAMPLE_APPS_INSTALL_BINDIR=${INSTALL_BINDIR}"
 EXTRA_OECMAKE += "-DSYSTEM_SAMPLE_APPS_INSTALL_LIBDIR=${INSTALL_LIBDIR}"
 EXTRA_OECMAKE += "-DTARGET_SUPPORTS_S2D=${TARGET_SUPPORTS_S2D}"
 
-FILES_${PN} += "${INSTALL_BINDIR}"
-FILES_${PN} += "${INSTALL_LIBDIR}"
+FILES:${PN} += "${INSTALL_BINDIR}"
+FILES:${PN} += "${INSTALL_LIBDIR}"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""

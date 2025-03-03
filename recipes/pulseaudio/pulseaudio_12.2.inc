@@ -128,8 +128,8 @@ PACKAGECONFIG[webrtc] = "--enable-webrtc-aec,--disable-webrtc-aec,webrtc-audio-p
 PACKAGECONFIG[ipv6] = "--enable-ipv6,--disable-ipv6,"
 PACKAGECONFIG[manpages] = "--enable-manpages, --disable-manpages, "
 
-EXTRA_OECONF_append_arm = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
-EXTRA_OECONF_append_armeb = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
+EXTRA_OECONF:append:arm = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
+EXTRA_OECONF:append:armeb = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
 
 
 export TARGET_PFPU = "${TARGET_FPU}"
@@ -146,13 +146,13 @@ set_cfg_value () {
 	fi
 }
 
-do_compile_append () {
+do_compile:append () {
 	if ${@bb.utils.contains('PACKAGECONFIG', 'autospawn-for-root', 'true', 'false', d)}; then
 		set_cfg_value src/client.conf allow-autospawn-for-root yes
 	fi
 }
 
-do_install_append() {
+do_install:append() {
 	install -d ${D}${sysconfdir}/default/volatiles
 	install -m 0644 ${WORKDIR}/volatiles.04_pulse  ${D}${sysconfdir}/default/volatiles/volatiles.04_pulse
 
@@ -187,8 +187,8 @@ do_install_append() {
 }
 
 USERADD_PACKAGES = "pulseaudio-server"
-GROUPADD_PARAM_pulseaudio-server = "-g 5020 pulse"
-USERADD_PARAM_pulseaudio-server = "--system --home /var/run/pulse \
+GROUPADD_PARAM:pulseaudio-server = "-g 5020 pulse"
+USERADD_PARAM:pulseaudio-server = "--system --home /var/run/pulse \
                               --no-create-home --shell /bin/false \
                               --groups audio,pulse,input,plugdev,diag --gid pulse pulse"
 
@@ -200,57 +200,57 @@ PACKAGES =+ "libpulsecore libpulsecore-dev libpulsecommon libpulse libpulse-simp
              pulseaudio-server pulseaudio-misc ${@bb.utils.contains('PACKAGECONFIG', 'dbus', 'pulseaudio-module-console-kit', '', d)}"
 
 #upgrade path:
-RREPLACES_pulseaudio-server = "libpulse-bin libpulse-conf"
+RREPLACES:pulseaudio-server = "libpulse-bin libpulse-conf"
 
 PACKAGES_DYNAMIC += "^pulseaudio-lib-.* ^pulseaudio-module-.*"
 
-FILES_libpulsecore = "${libdir}/pulseaudio/libpulsecore*.so"
-FILES_libpulsecore-dev = "${includedir}/pulsecore/*"
-FILES_libpulsecommon = "${libdir}/pulseaudio/libpulsecommon*.so"
+FILES:libpulsecore = "${libdir}/pulseaudio/libpulsecore*.so"
+FILES:libpulsecore-dev = "${includedir}/pulsecore/*"
+FILES:libpulsecommon = "${libdir}/pulseaudio/libpulsecommon*.so"
 
 # client.conf configures the behaviour of libpulse, so it belongs in the same
 # package.
-FILES_libpulse = "${libdir}/libpulse.so.* ${sysconfdir}/pulse/client.conf"
+FILES:libpulse = "${libdir}/libpulse.so.* ${sysconfdir}/pulse/client.conf"
 
-FILES_libpulse-simple = "${libdir}/libpulse-simple.so.*"
-FILES_libpulse-mainloop-glib = "${libdir}/libpulse-mainloop-glib.so.*"
+FILES:libpulse-simple = "${libdir}/libpulse-simple.so.*"
+FILES:libpulse-mainloop-glib = "${libdir}/libpulse-mainloop-glib.so.*"
 
-FILES_${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}/cmake"   
-FILES_${PN}-conf = "${sysconfdir}"
-FILES_${PN}-bin += "${sysconfdir}/default/volatiles/volatiles.04_pulse"
-FILES_${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/pactl */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
+FILES:${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}/cmake"
+FILES:${PN}-conf = "${sysconfdir}"
+FILES:${PN}-bin += "${sysconfdir}/default/volatiles/volatiles.04_pulse"
+FILES:${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/pactl */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
 
 SYSTEMD_PACKAGES = "${PN}-server"
-SYSTEMD_SERVICE_${PN}-server = "pulseaudio.service"
+SYSTEMD_SERVICE:${PN}-server = "pulseaudio.service"
 
-FILES_${PN}-misc = "${bindir}/* ${libdir}/pulseaudio/libpulsedsp.so"
+FILES:${PN}-misc = "${bindir}/* ${libdir}/pulseaudio/libpulsedsp.so"
 
 # Allow the pulseaudio package to be created empty as a placeholder (-dbg and -dev depend on it)
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"
 
-CONFFILES_libpulse = "${sysconfdir}/pulse/client.conf"
+CONFFILES:libpulse = "${sysconfdir}/pulse/client.conf"
 
-CONFFILES_pulseaudio-server = "\ 
+CONFFILES:pulseaudio-server = "\
   ${sysconfdir}/pulse/default.pa \
   ${sysconfdir}/pulse/daemon.conf \
   ${sysconfdir}/pulse/system.pa \
   "
 
-pkg_postinst_${PN}-server() {
+pkg_postinst:${PN}-server() {
         if [ -z "$D" ] && [ -e ${sysconfdir}/init.d/populate-volatile.sh ] ; then
             ${sysconfdir}/init.d/populate-volatile.sh update
         fi
 }
 
-python populate_packages_prepend() {
-    #d.setVar('PKG_pulseaudio', 'pulseaudio')
+python populate_packages:prepend() {
+    #d.setVar('PKG:pulseaudio', 'pulseaudio')
 
     plugindir = d.expand('${libdir}/pulse-${PV}/modules/')
     do_split_packages(d, plugindir, '^module-(.*)\.so$', 'pulseaudio-module-%s', 'PulseAudio module for %s', extra_depends='', prepend=True)
     do_split_packages(d, plugindir, '^lib(.*)\.so$', 'pulseaudio-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
 }
 
-RDEPENDS_pulseaudio-server = " \
+RDEPENDS:pulseaudio-server = " \
     pulseaudio-module-filter-apply \
     pulseaudio-module-filter-heuristics \
     pulseaudio-module-udev-detect \
@@ -276,20 +276,20 @@ RDEPENDS_pulseaudio-server = " \
 # If the server is installed, it's usually desirable to make ALSA applications
 # use PulseAudio. alsa-plugins-pulseaudio-conf will install the configuration
 # that makes the PulseAudio plugin the default ALSA device.
-RDEPENDS_pulseaudio-server += "alsa-plugins-pulseaudio-conf"
+RDEPENDS:pulseaudio-server += "alsa-plugins-pulseaudio-conf"
 
 # pulseaudio-module-console-kit is built whenever dbus is enabled by PACKAGECONFIG
 # but consolekit depends on libx11 and is available only for DISTRO with x11 in DISTRO_FEATURES
-RDEPENDS_pulseaudio-module-console-kit =+ "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'consolekit', '', d)}"
-RDEPENDS_pulseaudio-misc += "pulseaudio-module-cli-protocol-unix"
+RDEPENDS:pulseaudio-module-console-kit =+ "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'consolekit', '', d)}"
+RDEPENDS:pulseaudio-misc += "pulseaudio-module-cli-protocol-unix"
 
-FILES_pulseaudio-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
+FILES:pulseaudio-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
 
 # The console-kit module is good to have on X11 systems (it keeps PulseAudio
 # running for the duration of the user login session). The device-manager and
 # x11-* modules are referenced from the start-pulseaudio-x11 script, so those
 # modules must be installed when X11 is enabled.
-RDEPENDS_pulseaudio-server += "\
+RDEPENDS:pulseaudio-server += "\
         ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '\
                 pulseaudio-module-console-kit \
                 pulseaudio-module-device-manager \
@@ -301,55 +301,55 @@ RDEPENDS_pulseaudio-server += "\
 EXTRA_OECONF += "--disable-gsettings"
 
 # Explicitly add Bluetooth support coming in from bt-daemon
-#PACKAGECONFIG_append += "bluez5"
+#PACKAGECONFIG:append += "bluez5"
 
 # Explicitly create this directory for the volatile bind mount to work
-FILES_${PN}-server += "/var/lib/pulse"
+FILES:${PN}-server += "/var/lib/pulse"
 
 # systemd service to bind mount a writable /var/lib/pulse
-SYSTEMD_SERVICE_${PN}-server += "volatile-var-lib-pulse.service"
+SYSTEMD_SERVICE:${PN}-server += "volatile-var-lib-pulse.service"
 
-do_configure_prepend() {
+do_configure:prepend() {
 	# The repo checkout does not pull tags, so we need this to avoid
 	# git-version-gen failure
 	export GIT_DESCRIBE_FOR_BUILD="${PV}"
 }
 
 # Build the qahw module on sdmsteppe when 32-bit
-DEPENDS_append_sdmsteppe = " qahw audiohal"
-EXTRA_OECONF_append_sdmsteppe += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
-EXTRA_OECONF_append_sdmsteppe += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qahw-card"
+DEPENDS:append:sdmsteppe = " qahw audiohal"
+EXTRA_OECONF:append:sdmsteppe += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF:append:sdmsteppe += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS:pulseaudio-server:append:sdmsteppe += " pulseaudio-module-qahw-card"
 
 # Build the qsthw module on sdmsteppe when 32-bit
-DEPENDS_append_sdmsteppe = " qsthw qsthw-api"
-EXTRA_OECONF_append_sdmsteppe += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-qsthw"
-RDEPENDS_pulseaudio-server_append_sdmsteppe += " pulseaudio-module-dbus-protocol"
+DEPENDS:append:sdmsteppe = " qsthw qsthw-api"
+EXTRA_OECONF:append:sdmsteppe += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS:pulseaudio-server:append:sdmsteppe += " pulseaudio-module-qsthw"
+RDEPENDS:pulseaudio-server:append:sdmsteppe += " pulseaudio-module-dbus-protocol"
 
 # Build the qahw module on apq8009 when 32-bit
-DEPENDS_append_apq8009 = " qahw audiohal"
-EXTRA_OECONF_append_apq8009 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
-EXTRA_OECONF_append_apq8009 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-qahw-card"
+DEPENDS:append:apq8009 = " qahw audiohal"
+EXTRA_OECONF:append:apq8009 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF:append:apq8009 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS:pulseaudio-server:append:apq8009 += " pulseaudio-module-qahw-card"
 
 # Build the qsthw module on apq8009 when 32-bit
-DEPENDS_append_apq8009 = " qsthw qsthw-api"
-EXTRA_OECONF_append_apq8009 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-qsthw"
-RDEPENDS_pulseaudio-server_append_apq8009 += " pulseaudio-module-dbus-protocol"
+DEPENDS:append:apq8009 = " qsthw qsthw-api"
+EXTRA_OECONF:append:apq8009 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS:pulseaudio-server:append:apq8009 += " pulseaudio-module-qsthw"
+RDEPENDS:pulseaudio-server:append:apq8009 += " pulseaudio-module-dbus-protocol"
 
 # Build the qahw module on qrb5165
-DEPENDS_append_qrb5165 = " qahw audiohal"
-EXTRA_OECONF_append_qrb5165 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
-EXTRA_OECONF_append_qrb5165 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
-RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qahw-card"
+DEPENDS:append:qrb5165 = " qahw audiohal"
+EXTRA_OECONF:append:qrb5165 += " --with-qahw-api=${STAGING_INCDIR}/mm-audio/qahw_api/inc"
+EXTRA_OECONF:append:qrb5165 += " --with-qahw=${STAGING_INCDIR}/mm-audio/qahw/inc"
+RDEPENDS:pulseaudio-server:append:qrb5165 += " pulseaudio-module-qahw-card"
 
 # Build the qsthw module on qrb5165
-DEPENDS_append_qrb5165 = " qsthw qsthw-api"
-EXTRA_OECONF_append_qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
-RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-qsthw"
-RDEPENDS_pulseaudio-server_append_qrb5165 += " pulseaudio-module-dbus-protocol"
+DEPENDS:append:qrb5165 = " qsthw qsthw-api"
+EXTRA_OECONF:append:qrb5165 += " --with-qsthw=${STAGING_INCDIR}/mm-audio/qsthw_api"
+RDEPENDS:pulseaudio-server:append:qrb5165 += " pulseaudio-module-qsthw"
+RDEPENDS:pulseaudio-server:append:qrb5165 += " pulseaudio-module-dbus-protocol"
 
-FILES_${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
+FILES:${PN}-module-qahw-card += "${datadir}/pulseaudio/qahw"
 

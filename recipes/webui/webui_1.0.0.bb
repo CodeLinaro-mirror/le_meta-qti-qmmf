@@ -15,7 +15,7 @@ SRC_URI = "file://webui"
 
 S 	= "${WORKDIR}/webui/"
 
-FILES_${PN} += "/data/*"
+FILES:${PN} += "/data/*"
 
 do_compile(){
 }

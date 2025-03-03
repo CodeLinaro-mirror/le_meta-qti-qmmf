@@ -13,8 +13,8 @@ DEPENDS += "github.com-gorilla-websocket"
 DEPENDS += "github.com-bitly-simplejson"
 DEPENDS += "libcutils"
 DEPENDS += "qmmf-support"
-DEPENDS_remove_sdmsteppe = "go-cross-arm"
-DEPENDS_append_sdmsteppe = " go-cross-canadian-arm"
+DEPENDS:remove:sdmsteppe = "go-cross-arm"
+DEPENDS:append:sdmsteppe = " go-cross-canadian-arm"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/qmmf-webserver:"
 SRC_URI = "file://ipc-webserver"
@@ -25,7 +25,7 @@ SRCREV = "b378caee5b2a673abe3897c40fde529bff7b986e"
 
 S = "${WORKDIR}/ipc-webserver"
 
-FILES_${PN} += "ipc-webserver"
+FILES:${PN} += "ipc-webserver"
 
 RECIPE_SYSROOT ?= "${STAGING_LIBDIR}/${TARGET_SYS}"
 export CGO_ENABLED = "1"
@@ -88,5 +88,5 @@ sysroot_preprocess() {
 
 SYSROOT_PREPROCESS_FUNCS += "sysroot_preprocess"
 
-FILES_${PN} += "/data/misc/qmmf/ipc_webserver/*"
-FILES_${PN} += "/etc/systemd/system/"
+FILES:${PN} += "/data/misc/qmmf/ipc_webserver/*"
+FILES:${PN} += "/etc/systemd/system/"

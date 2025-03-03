@@ -16,7 +16,7 @@ LDFLAGS += "-luv"
 
 S = "${WORKDIR}/${PN}"
 
-FILES_${PN} += "ipmon"
+FILES:${PN} += "ipmon"
 
 do_compile() {
 	oe_runmake

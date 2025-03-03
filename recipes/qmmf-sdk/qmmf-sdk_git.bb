@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "\
 file://${COMMON_LICENSE_DIR}/${LICENSE};md5=3775480a712fc46a69647678acb234cb\
 "
 
-SSTATE_DUPWHITELIST = "/"
+SSTATE_ALLOW_OVERLAP_FILES = "/"
 
 # Mandatory DISTRO_FEATURES to set for QMMF
 
@@ -21,12 +21,12 @@ DEPENDS += "gtest"
 DEPENDS += "libcutils"
 DEPENDS += "liblog"
 DEPENDS += "gbm"
-DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS_append_qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS_append_qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
-RDEPENDS_${PN} = "gbm"
+RDEPENDS:${PN} = "gbm"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
@@ -43,17 +43,17 @@ SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
-SRC_URI_append_qrb5165  += "file://qmmf-server-env_qrb5165"
-SRC_URI_append_qrb5165  += "file://camera_cgroup.service"
-SRC_URI_append_qrbx210  += "file://qmmf-server-env_qrb5165"
-SRC_URI_append_qrbx210  += "file://camera_cgroup.service"
+SRC_URI:append:qrb5165  += "file://qmmf-server-env_qrb5165"
+SRC_URI:append:qrb5165  += "file://camera_cgroup.service"
+SRC_URI:append:qrbx210  += "file://qmmf-server-env_qrb5165"
+SRC_URI:append:qrbx210  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
-do_install_append () {
+do_install:append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}/etc/systemd/system/
         install -d ${D}/etc/systemd/system/multi-user.target.wants/
@@ -78,27 +78,27 @@ do_install_append () {
     fi
 }
 
-FILES_${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
-FILES_${PN}-qmmf-server     = "${bindir}/qmmf-server"
-FILES_${PN}-qmmf-server    += "/etc/systemd/system/"
-FILES_${PN}-qmmf-server    += "/data/*"
-FILES_${PN}-qmmf-server    += "/mnt/sdcard/data/misc/qmmf/"
+FILES:${PN}-qmmf-server-dbg = "${bindir}/.debug/qmmf-server"
+FILES:${PN}-qmmf-server     = "${bindir}/qmmf-server"
+FILES:${PN}-qmmf-server    += "/etc/systemd/system/"
+FILES:${PN}-qmmf-server    += "/data/*"
+FILES:${PN}-qmmf-server    += "/mnt/sdcard/data/misc/qmmf/"
 
-FILES_${PN}-libqmmf_recorder_client-dbg    = "${libdir}/.debug/libqmmf_recorder_client.*"
-FILES_${PN}-libqmmf_recorder_client        = "${libdir}/libqmmf_recorder_client.so.*"
-FILES_${PN}-libqmmf_recorder_client-dev    = "${libdir}/libqmmf_recorder_client.so ${libdir}/libqmmf_recorder_client.la ${includedir}"
+FILES:${PN}-libqmmf_recorder_client-dbg    = "${libdir}/.debug/libqmmf_recorder_client.*"
+FILES:${PN}-libqmmf_recorder_client        = "${libdir}/libqmmf_recorder_client.so.*"
+FILES:${PN}-libqmmf_recorder_client-dev    = "${libdir}/libqmmf_recorder_client.so ${libdir}/libqmmf_recorder_client.la ${includedir}"
 
-FILES_${PN}-libqmmf_recorder_service-dbg    = "${libdir}/.debug/libqmmf_recorder_service.*"
-FILES_${PN}-libqmmf_recorder_service        = "${libdir}/libqmmf_recorder_service.so.*"
-FILES_${PN}-libqmmf_recorder_service-dev    = "${libdir}/libqmmf_recorder_service.so ${libdir}/libqmmf_recorder_service.la ${includedir}"
+FILES:${PN}-libqmmf_recorder_service-dbg    = "${libdir}/.debug/libqmmf_recorder_service.*"
+FILES:${PN}-libqmmf_recorder_service        = "${libdir}/libqmmf_recorder_service.so.*"
+FILES:${PN}-libqmmf_recorder_service-dev    = "${libdir}/libqmmf_recorder_service.so ${libdir}/libqmmf_recorder_service.la ${includedir}"
 
-FILES_${PN}-libcamera_adaptor-dbg    = "${libdir}/.debug/libcamera_adaptor.*"
-FILES_${PN}-libcamera_adaptor        = "${libdir}/libcamera_adaptor.so.*"
-FILES_${PN}-libcamera_adaptor-dev    = "${libdir}/libcamera_adaptor.so ${libdir}/libcamera_adaptor.la ${includedir}"
+FILES:${PN}-libcamera_adaptor-dbg    = "${libdir}/.debug/libcamera_adaptor.*"
+FILES:${PN}-libcamera_adaptor        = "${libdir}/libcamera_adaptor.so.*"
+FILES:${PN}-libcamera_adaptor-dev    = "${libdir}/libcamera_adaptor.so ${libdir}/libcamera_adaptor.la ${includedir}"
 
-FILES_${PN} += "/data/*"
+FILES:${PN} += "/data/*"
 
-INSANE_SKIP_${PN} += "build-deps dev-deps file-rdeps dev-so"
+INSANE_SKIP:${PN} += "build-deps dev-deps file-rdeps dev-so"
 do_configure[depends] += "virtual/kernel:do_shared_workdir"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
