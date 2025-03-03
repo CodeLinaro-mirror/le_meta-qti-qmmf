@@ -47,23 +47,23 @@ do_install() {
     cp ${S}/*/*.so ${D}${libdir}
 }
 
-FILES_${PN}-libBasicUsageEnvironment-dbg    = "${libdir}/.debug/libBasicUsageEnvironment.*"
-FILES_${PN}-libBasicUsageEnvironment        = "${libdir}/libBasicUsageEnvironment.so"
-FILES_${PN}-libBasicUsageEnvironment-dev    = "${libdir}/libBasicUsageEnvironment.so ${includedir}"
+FILES:${PN}-libBasicUsageEnvironment-dbg    = "${libdir}/.debug/libBasicUsageEnvironment.*"
+FILES:${PN}-libBasicUsageEnvironment        = "${libdir}/libBasicUsageEnvironment.so"
+FILES:${PN}-libBasicUsageEnvironment-dev    = "${libdir}/libBasicUsageEnvironment.so ${includedir}"
 
-FILES_${PN}-libgroupsock-dbg    = "${libdir}/.debug/libgroupsock.*"
-FILES_${PN}-libgroupsock        = "${libdir}/libgroupsock.so"
-FILES_${PN}-libgroupsock-dev    = "${libdir}/libgroupsock.so ${includedir}"
+FILES:${PN}-libgroupsock-dbg    = "${libdir}/.debug/libgroupsock.*"
+FILES:${PN}-libgroupsock        = "${libdir}/libgroupsock.so"
+FILES:${PN}-libgroupsock-dev    = "${libdir}/libgroupsock.so ${includedir}"
 
-FILES_${PN}-libliveMedia-dbg    = "${libdir}/.debug/libliveMedia.*"
-FILES_${PN}-libliveMedia        = "${libdir}/libliveMedia.so"
-FILES_${PN}-libliveMedia-dev    = "${libdir}/libliveMedia.so ${includedir}"
+FILES:${PN}-libliveMedia-dbg    = "${libdir}/.debug/libliveMedia.*"
+FILES:${PN}-libliveMedia        = "${libdir}/libliveMedia.so"
+FILES:${PN}-libliveMedia-dev    = "${libdir}/libliveMedia.so ${includedir}"
 
-FILES_${PN}-libUsageEnvironment-dbg    = "${libdir}/.debug/libUsageEnvironment.*"
-FILES_${PN}-libUsageEnvironment        = "${libdir}/libUsageEnvironment.so"
-FILES_${PN}-libUsageEnvironment-dev    = "${libdir}/libUsageEnvironment.so ${includedir}"
+FILES:${PN}-libUsageEnvironment-dbg    = "${libdir}/.debug/libUsageEnvironment.*"
+FILES:${PN}-libUsageEnvironment        = "${libdir}/libUsageEnvironment.so"
+FILES:${PN}-libUsageEnvironment-dev    = "${libdir}/libUsageEnvironment.so ${includedir}"
 
-FILES_${PN} = "${libdir}/lib*.so"
-FILES_${PN}-dev = "${libdir}/lib*.so ${includedir}"
-FILES_${PN}-dbg = "${libdir}/.debug"
+FILES:${PN} = "${libdir}/lib*.so"
+FILES:${PN}-dev = "${libdir}/lib*.so ${includedir}"
+FILES:${PN}-dbg = "${libdir}/.debug"
 PACKAGES = "${PN} ${PN}-dbg ${PN}-dev"
