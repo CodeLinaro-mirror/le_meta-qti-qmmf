@@ -1,10 +1,9 @@
 inherit cmake pkgconfig
 
 DESCRIPTION = "QMMF SDK"
-LICENSE = "BSD"
-LIC_FILES_CHKSUM = "\
-file://${COMMON_LICENSE_DIR}/${LICENSE};md5=3775480a712fc46a69647678acb234cb\
-"
+LICENSE = "BSD-3-Clause-Clear"
+LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/\
+${LICENSE};md5=3771d4920bd6cdb8cbdf1e8344489ee0"
 
 SSTATE_DUPWHITELIST = "/"
 
@@ -30,6 +29,8 @@ RDEPENDS_${PN} = "gbm"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
+
+DEBUG_PREFIX_MAP:remove = "-fcanon-prefix-map"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
