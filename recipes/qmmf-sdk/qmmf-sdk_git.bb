@@ -24,6 +24,8 @@ DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera',
 DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS:${PN} = "gbm"
 
@@ -48,6 +50,8 @@ SRC_URI:append:qrb5165  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qrb5165  += "file://camera_cgroup.service"
 SRC_URI:append:qrbx210  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qrbx210  += "file://camera_cgroup.service"
+SRC_URI:append:sdmsteppe  += "file://qmmf-server-env_qrb5165"
+SRC_URI:append:sdmsteppe  += "file://camera_cgroup.service"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -61,7 +65,7 @@ do_install:append () {
         # enable the service for multi-user.target
         ln -sf /etc/systemd/system/qmmf-server.service \
            ${D}/etc/systemd/system/multi-user.target.wants/qmmf-server.service
-        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+        if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "sdmsteppe" ]; then
             install -m 0644 ${WORKDIR}/camera_cgroup.service -D ${D}/etc/systemd/system/camera_cgroup.service
             ln -sf /etc/systemd/system/camera_cgroup.service \
                ${D}/etc/systemd/system/multi-user.target.wants/camera_cgroup.service
@@ -72,7 +76,7 @@ do_install:append () {
     install -m 0644 ${WORKDIR}/boottime_config.txt -D ${D}/${sysconfdir}/boottime_config.txt
     install -d ${D}/mnt/sdcard/data/misc/qmmf/
     install -d ${D}/data/misc/qmmf
-    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ]; then
+    if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "sdmsteppe" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
@@ -98,6 +102,7 @@ FILES:${PN}-libcamera_adaptor        = "${libdir}/libcamera_adaptor.so.*"
 FILES:${PN}-libcamera_adaptor-dev    = "${libdir}/libcamera_adaptor.so ${libdir}/libcamera_adaptor.la ${includedir}"
 
 FILES:${PN} += "/data/*"
+FILES:${PN} += "/mnt/sdcard/data/misc/qmmf/"
 
 INSANE_SKIP:${PN} += "build-deps dev-deps file-rdeps dev-so"
 do_configure[depends] += "virtual/kernel:do_shared_workdir"
