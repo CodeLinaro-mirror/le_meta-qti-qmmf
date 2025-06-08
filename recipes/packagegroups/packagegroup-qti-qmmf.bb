@@ -18,3 +18,5 @@ RDEPENDS:packagegroup-qti-qmmf = ' \
 RDEPENDS:packagegroup-qti-qmmf-sdk = ' \
     qmmf-sdk \
 '
+
+RDEPENDS:packagegroup-qti-qmmf:remove:sdmsteppe = "packagegroup-qti-pulseaudio"
