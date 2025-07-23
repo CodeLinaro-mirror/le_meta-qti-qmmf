@@ -68,6 +68,17 @@ FILES_SOLIBSDEV = ""
 
 DEBUG_PREFIX_MAP:remove = "-fcanon-prefix-map"
 
+do_configure:prepend() {
+    if [ ${@bb.utils.contains('ARMPKGARCH', 'armv7a','true','', d)} ]; then
+        mkdir -p ${WORKDIR}/lib32-recipe-sysroot/usr/lib/gcc/arm-oemllib32-linux-gnueabi/11.5.0
+        ln -sf \
+            ${WORKDIR}/lib32-recipe-sysroot/usr/lib/arm-oemllib32-linux-gnueabi/11.5.0/* \
+            ${WORKDIR}/lib32-recipe-sysroot/usr/lib/gcc/arm-oemllib32-linux-gnueabi/11.5.0/
+
+        cp -r "${GIT_CEILING_DIRECTORIES}/recipe-sysroot/usr/include/"  "${PKG_CONFIG_SYSROOT_DIR}/usr/"
+    fi
+}
+
 do_install:append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}/etc/systemd/system/
