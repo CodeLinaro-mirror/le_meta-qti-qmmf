@@ -22,6 +22,8 @@ DEPENDS:append:bengal += "media"
 DEPENDS:append:bengal += "media-external"
 DEPENDS:append:sun += "media"
 DEPENDS:append:sun += "media-external"
+DEPENDS:append:sun += "mm-audio-headers"
+DEPENDS:append:sun += "audio-codec2"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/iot-core-oss/:"
 
@@ -42,6 +44,7 @@ CODEC2_CONFIG_VERSION:kera := "2.0"
 ENABLE_AUDIO_PLUGINS:kera := "TRUE"
 CODEC2_CONFIG_VERSION:bengal := "2.0"
 CODEC2_CONFIG_VERSION:sun := "2.0"
+ENABLE_AUDIO_PLUGINS:sun := "TRUE"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
