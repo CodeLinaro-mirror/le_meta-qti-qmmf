@@ -34,6 +34,8 @@ DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera',
 DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:bengal += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:bengal += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:vienna += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:vienna += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS:${PN} = "gbm"
 
@@ -63,6 +65,7 @@ SRC_URI:append:kera     += "file://qmmf-server-env_kera"
 SRC_URI:append:sun   += "file://qmmf-server-env_sun"
 SRC_URI:append:bengal  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:bengal  += "file://camera_cgroup.service"
+SRC_URI:append:vienna   += "file://qmmf-server-env_sun"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -98,6 +101,8 @@ do_install:append () {
     elif [ ${BASEMACHINE} == "kera" ]; then
         install ${WORKDIR}/qmmf-server-env_kera -D ${D}/${sysconfdir}/qmmf-server-env
     elif [ ${BASEMACHINE} == "sun" ]; then
+        install ${WORKDIR}/qmmf-server-env_sun -D ${D}/${sysconfdir}/qmmf-server-env
+    elif [ ${BASEMACHINE} == "vienna" ]; then
         install ${WORKDIR}/qmmf-server-env_sun -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
