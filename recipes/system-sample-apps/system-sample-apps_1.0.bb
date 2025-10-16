@@ -9,12 +9,12 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta-qti-bsp/files/common-licenses/${LICE
 # Dependencies.
 DEPENDS := "gstreamer1.0"
 
-DEPENDS:append:kalama += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
-DEPENDS:append:kalama += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
-DEPENDS:append:pineapple += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
-DEPENDS:append:pineapple += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
-DEPENDS:append:kera += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
-DEPENDS:append:kera += "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
+DEPENDS:append:kalama = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
+DEPENDS:append:kalama = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
+DEPENDS:append:pineapple = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
+DEPENDS:append:pineapple = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
+DEPENDS:append:kera = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
+DEPENDS:append:kera = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
 
 FILESPATH =+ "${WORKSPACE}:"
 SRC_URI = "file://vendor/qcom/opensource/system/sample-apps/"
