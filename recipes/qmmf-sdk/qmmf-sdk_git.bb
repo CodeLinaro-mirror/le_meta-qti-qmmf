@@ -8,6 +8,7 @@ SSTATE_ALLOW_OVERLAP_FILES = "/"
 
 # Mandatory DISTRO_FEATURES to set for QMMF
 
+inherit features_check
 REQUIRED_DISTRO_FEATURES += "qti-camera"
 REQUIRED_DISTRO_FEATURES += "qti-qmmf"
 
