@@ -27,6 +27,8 @@ DEPENDS:append:pineapple = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera
 DEPENDS:append:pineapple = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:kera = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:kera = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:alor = "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:alor = "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:sun = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:sun = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:qrb5165 = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
@@ -64,6 +66,7 @@ SRC_URI:append:qrbx210  = " file://camera_cgroup.service"
 SRC_URI:append:kalama   = " file://qmmf-server-env_wayland"
 SRC_URI:append:pineapple   = " file://qmmf-server-env_wayland"
 SRC_URI:append:kera     = " file://qmmf-server-env_wayland"
+SRC_URI:append:alor     = "file://qmmf-server-env_wayland"
 SRC_URI:append:sun   = " file://qmmf-server-env_wayland"
 SRC_URI:append:bengal  = " file://qmmf-server-env_qrb5165"
 SRC_URI:append:bengal  = " file://camera_cgroup.service"
@@ -96,7 +99,7 @@ do_install:append () {
     install -d ${D}/data/misc/qmmf
     if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcm2290-mtp" ] || [ ${BASEMACHINE} == "qcm4325-mtp" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "kalama" ] || [ ${BASEMACHINE} == "pineapple" ] || [ ${BASEMACHINE} == "kera" ] || [ ${BASEMACHINE} == "sun" ] || [ ${BASEMACHINE} == "vienna" ]; then
+    elif [ ${BASEMACHINE} == "kalama" ] || [ ${BASEMACHINE} == "pineapple" ] || [ ${BASEMACHINE} == "kera" ] || [ ${BASEMACHINE} == "sun" ] || [ ${BASEMACHINE} == "vienna" ] || [${BASEMACHINE} == "alor"]; then
         install ${WORKDIR}/qmmf-server-env_wayland -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
