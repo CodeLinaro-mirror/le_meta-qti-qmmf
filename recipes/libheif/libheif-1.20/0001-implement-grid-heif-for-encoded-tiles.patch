@@ -1,0 +1,286 @@
+From 1b55bdbb906ffdabc043dcdd8957b76c36e9d436 Mon Sep 17 00:00:00 2001
+From: Kin Zhao <yunjiez@qti.qualcomm.com>
+Date: Tue, 18 Nov 2025 14:53:24 +0800
+Subject: [PATCH] implement grid heif for encoded tiles
+
+Upstream-Status: Inappropriate [Qualcomm specific]
+
+Signed-off-by: Kin Zhao <yunjiez@qti.qualcomm.com>
+---
+ libheif/api/libheif/heif_aux_images.cc | 33 ++++++++++++++-
+ libheif/api/libheif/heif_aux_images.h  |  7 ++++
+ libheif/api/libheif/heif_tiling.cc     | 18 ++++++++
+ libheif/api/libheif/heif_tiling.h      |  6 +++
+ libheif/context.cc                     | 58 ++++++++++++++++++++++++++
+ libheif/context.h                      |  5 +++
+ libheif/image-items/grid.cc            | 41 ++++++++++++++++++
+ libheif/image-items/grid.h             |  4 ++
+ 8 files changed, 171 insertions(+), 1 deletion(-)
+
+diff --git a/libheif/api/libheif/heif_aux_images.cc b/libheif/api/libheif/heif_aux_images.cc
+index c32d3ecb..c28aebe3 100644
+--- a/libheif/api/libheif/heif_aux_images.cc
++++ b/libheif/api/libheif/heif_aux_images.cc
+@@ -25,7 +25,7 @@
+ #include <cstring>
+ #include <memory>
+ #include <algorithm>
+-
++#include <vector>
+ 
+ // ------------------------- depth images -------------------------
+ 
+@@ -228,6 +228,37 @@ struct heif_error heif_context_encode_thumbnail(struct heif_context* ctx,
+   return heif_error_success;
+ }
+ 
++heif_error heif_context_encoded_thumbnail(heif_context* ctx,
++                                         const heif_image_handle* image_handle,
++                                         uint32_t format,
++                                         uint32_t width, uint32_t height,
++                                         uint8_t* data, uint32_t length)
++{
++  std::vector<unsigned char> bitstream(data, data + length);
++  auto encodingResult = ctx->context->encoded_image(heif_compression_HEVC,
++                                                  width, height,
++                                                  bitstream);
++
++  if (encodingResult.error != Error::Ok) {
++    return encodingResult.error.error_struct(ctx->context.get());
++  }
++
++  std::shared_ptr<ImageItem> thumbnail_image = *encodingResult;
++
++  if (!thumbnail_image) {
++    Error err(heif_error_Usage_error,
++              heif_suberror_Invalid_parameter_value,
++              "Thumbnail images must be smaller than the original image.");
++    return err.error_struct(ctx->context.get());
++  }
++
++  Error error = ctx->context->assign_thumbnail(image_handle->image, thumbnail_image);
++  if (error != Error::Ok) {
++    return error.error_struct(ctx->context.get());
++  }
++
++  return heif_error_success;
++}
+ 
+ struct heif_error heif_context_assign_thumbnail(struct heif_context* ctx,
+                                                 const struct heif_image_handle* master_image,
+diff --git a/libheif/api/libheif/heif_aux_images.h b/libheif/api/libheif/heif_aux_images.h
+index db4c7360..26912d85 100644
+--- a/libheif/api/libheif/heif_aux_images.h
++++ b/libheif/api/libheif/heif_aux_images.h
+@@ -131,6 +131,13 @@ heif_error heif_context_encode_thumbnail(heif_context*,
+                                          int bbox_size,
+                                          heif_image_handle** out_thumb_image_handle);
+ 
++LIBHEIF_API
++heif_error heif_context_encoded_thumbnail(heif_context* ctx,
++                                          const heif_image_handle* image_handle,
++                                          uint32_t format,
++                                          uint32_t width, uint32_t height,
++                                          uint8_t* data, uint32_t length);
++
+ // Assign 'thumbnail_image' as the thumbnail image of 'master_image'.
+ LIBHEIF_API
+ heif_error heif_context_assign_thumbnail(struct heif_context*,
+diff --git a/libheif/api/libheif/heif_tiling.cc b/libheif/api/libheif/heif_tiling.cc
+index 0e78443a..d162b5bc 100644
+--- a/libheif/api/libheif/heif_tiling.cc
++++ b/libheif/api/libheif/heif_tiling.cc
+@@ -271,3 +271,21 @@ struct heif_error heif_context_add_image_tile(struct heif_context* ctx,
+     };
+   }
+ }
++
++heif_error heif_context_add_encoded_image_tile(struct heif_context* ctx,
++                                       struct heif_image_handle* tiled_image,
++                                       uint32_t tile_x, uint32_t tile_y,
++                                       uint8_t* data, uint32_t length)
++{
++  if (auto grid_item = std::dynamic_pointer_cast<ImageItem_Grid>(tiled_image->image)) {
++    Error err = grid_item->add_encoded_image_tile(tile_x, tile_y, heif_compression_HEVC, data, length);
++    return err.error_struct(ctx->context.get());
++  }
++  else {
++    return {
++        heif_error_Usage_error,
++        heif_suberror_Unspecified,
++        "Cannot add tile to a non-tiled image"
++    };
++  }
++}
+diff --git a/libheif/api/libheif/heif_tiling.h b/libheif/api/libheif/heif_tiling.h
+index bc3f038a..a797e386 100644
+--- a/libheif/api/libheif/heif_tiling.h
++++ b/libheif/api/libheif/heif_tiling.h
+@@ -130,6 +130,12 @@ heif_error heif_context_add_image_tile(heif_context* ctx,
+                                        const heif_image* image,
+                                        heif_encoder* encoder);
+ 
++LIBHEIF_API
++heif_error heif_context_add_encoded_image_tile(heif_context* ctx,
++                                               heif_image_handle* tiled_image,
++                                               uint32_t tile_x, uint32_t tile_y,
++                                               uint8_t* data, uint32_t length);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/libheif/context.cc b/libheif/context.cc
+index cb5b7813..7a4f24cf 100644
+--- a/libheif/context.cc
++++ b/libheif/context.cc
+@@ -1415,6 +1415,64 @@ Result<std::shared_ptr<ImageItem>> HeifContext::encode_image(const std::shared_p
+   return output_image_item;
+ }
+ 
++Result<std::shared_ptr<ImageItem>> HeifContext::encoded_image(
++                                heif_compression_format format,
++                                uint32_t width, uint32_t height,
++                                const std::vector<uint8_t>& bitstream)
++{
++ ImageItem_HEVC *hevc_image_item = NULL;
++
++  if (format == heif_compression_HEVC) {
++    hevc_image_item = new ImageItem_HEVC(this);
++  } else {
++    return Error{
++        heif_error_Invalid_input,
++        heif_suberror_Invalid_parameter_value,
++        "For now only hevc compression is supported."
++    };
++  }
++
++  hevc_image_item->set_size(width, height);
++
++  auto infe_box = get_heif_file()->add_new_infe_box(hevc_image_item->get_infe_type());
++  heif_item_id image_id = infe_box->get_item_ID();
++  hevc_image_item->set_id(image_id);
++
++  hevc_image_item->set_preencoded_hevc_image (bitstream);
++
++  std::vector<std::shared_ptr<Box>> mproperties;
++  auto ispe = std::make_shared<Box_ispe>();
++  ispe->set_size(width, height);
++  ispe->set_is_essential(hevc_image_item->is_ispe_essential());
++  mproperties.push_back(ispe);
++
++  std::shared_ptr<Box_pixi> pixi = std::make_shared<Box_pixi>();
++  pixi->add_channel_bits(8);
++  pixi->add_channel_bits(8);
++  pixi->add_channel_bits(8);
++  mproperties.push_back(pixi);
++
++   // set item properties
++  for (auto& propertyBox : mproperties) {
++    bool essential = propertyBox->is_essential();
++
++    int index = m_heif_file->get_ipco_box()->find_or_append_child_box(propertyBox);
++    m_heif_file->get_ipma_box()->add_property_for_item_ID(image_id, Box_ipma::PropertyAssociation{essential,
++                                                                                                           uint16_t(index + 1)});
++  }
++  std::shared_ptr<ImageItem> output_image_item = std::shared_ptr<ImageItem>(hevc_image_item);
++
++  insert_image_item(output_image_item->get_id(), output_image_item);
++
++  std::vector<std::shared_ptr<Box>> properties;
++  Error err = m_heif_file->get_properties(output_image_item->get_id(), properties);
++  if (err) {
++    return err;
++  }
++  output_image_item->set_properties(properties);
++
++  return output_image_item;
++}
+ 
+ void HeifContext::set_primary_image(const std::shared_ptr<ImageItem>& image)
+ {
+diff --git a/libheif/context.h b/libheif/context.h
+index 6d41565a..2713404a 100644
+--- a/libheif/context.h
++++ b/libheif/context.h
+@@ -132,6 +132,11 @@ public:
+                                                   const struct heif_encoding_options& options,
+                                                   enum heif_image_input_class input_class);
+ 
++  Result<std::shared_ptr<ImageItem>> encoded_image(heif_compression_format format,
++                                                   uint32_t image_width,
++                                                   uint32_t image_height,
++                                                   const std::vector<uint8_t>& bitstream);
++
+   void set_primary_image(const std::shared_ptr<ImageItem>& image);
+ 
+   bool is_primary_image_set() const { return m_primary_image != nullptr; }
+diff --git a/libheif/image-items/grid.cc b/libheif/image-items/grid.cc
+index 24ece569..eb0da8df 100644
+--- a/libheif/image-items/grid.cc
++++ b/libheif/image-items/grid.cc
+@@ -708,6 +708,47 @@ Error ImageItem_Grid::add_image_tile(uint32_t tile_x, uint32_t tile_y,
+   return Error::Ok;
+ }
+ 
++Error ImageItem_Grid::add_encoded_image_tile(uint32_t tile_x, uint32_t tile_y,
++                                     heif_compression_format format,
++                                     uint8_t* data, uint32_t length)
++{
++  std::vector<unsigned char> bitstreams(data, data + length);
++  heif_image_tiling tiling = get_heif_image_tiling();
++
++  tiling.tile_width = tiling.image_width / tiling.num_columns;
++  tiling.tile_height = tiling.image_height / tiling.num_rows;
++
++  auto encodingResult = get_context()->encoded_image(format,
++      tiling.tile_width, tiling.tile_height, bitstreams);
++  if (encodingResult.error) {
++    return encodingResult.error;
++  }
++
++  std::shared_ptr<ImageItem> encoded_image = *encodingResult;
++
++  auto file = get_file();
++  heif_item_id iid = encoded_image->get_id();
++  std::shared_ptr<Box_infe> infebox = file->get_infe_box(iid);
++
++  if (infebox == nullptr) {
++    printf ("null infebox\n");
++  } else {
++    infebox->set_hidden_item(true);
++  }
++
++  // grid tiles are hidden items
++  file->get_infe_box(encoded_image->get_id())->set_hidden_item(true);
++
++  // Assign tile to grid
++  file->set_iref_reference(get_id(), fourcc("dimg"), tile_y * tiling.num_columns + tile_x, encoded_image->get_id());
++  set_grid_tile_id(tile_x, tile_y, encoded_image->get_id());
++
++  // Add PIXI property (copy from first tile)
++  auto pixi = encoded_image->get_property<Box_pixi>();
++  add_property(pixi, true);
++
++  return Error::Ok;
++}
+ 
+ Result<std::shared_ptr<ImageItem_Grid>> ImageItem_Grid::add_and_encode_full_grid(HeifContext* ctx,
+                                                                                  const std::vector<std::shared_ptr<HeifPixelImage>>& tiles,
+diff --git a/libheif/image-items/grid.h b/libheif/image-items/grid.h
+index 70422eba..fd0e249d 100644
+--- a/libheif/image-items/grid.h
++++ b/libheif/image-items/grid.h
+@@ -91,6 +91,10 @@ public:
+                                                                    uint16_t tile_columns,
+                                                                    const struct heif_encoding_options* encoding_options);
+ 
++  Error add_encoded_image_tile(uint32_t tile_x, uint32_t tile_y,
++                               heif_compression_format format,
++                               uint8_t* data, uint32_t length);
++
+   Error add_image_tile(uint32_t tile_x, uint32_t tile_y,
+                        const std::shared_ptr<HeifPixelImage>& image,
+                        struct heif_encoder* encoder);
+-- 
+2.34.1
+
