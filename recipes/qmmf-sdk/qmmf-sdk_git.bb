@@ -8,6 +8,7 @@ SSTATE_ALLOW_OVERLAP_FILES = "/"
 
 # Mandatory DISTRO_FEATURES to set for QMMF
 
+inherit features_check
 REQUIRED_DISTRO_FEATURES += "qti-camera"
 REQUIRED_DISTRO_FEATURES += "qti-qmmf"
 
@@ -19,21 +20,23 @@ DEPENDS += "gtest"
 DEPENDS += "libcutils"
 DEPENDS += "liblog"
 DEPENDS += "gbm"
-DEPENDS:append:sdmsteppe += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
-DEPENDS:append:kalama += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:kalama += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:pineapple += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:pineapple += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:kera += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:kera += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:sun += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:sun += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:qrb5165 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:qrbx210 += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
-DEPENDS:append:bengal += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
-DEPENDS:append:bengal += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:sdmsteppe = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libcamera-client', '', d)}"
+DEPENDS:append:kalama = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:kalama = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:pineapple = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:pineapple = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:kera = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:kera = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:sun = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:sun = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:qrb5165 = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:qrb5165 = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:qrbx210 = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:qrbx210 = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:bengal = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:bengal = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:vienna = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:vienna = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS:${PN} = "gbm"
 
@@ -53,16 +56,18 @@ SRC_URI  := "file://qmmf-sdk"
 SRC_URI  += "file://recorder_boottest.sh"
 SRC_URI  += "file://boottime_config.txt"
 SRC_URI  += "file://qmmf-server-env"
-SRC_URI:append:qrb5165  += "file://qmmf-server-env_qrb5165"
-SRC_URI:append:qrb5165  += "file://camera_cgroup.service"
-SRC_URI:append:qrbx210  += "file://qmmf-server-env_qrb5165"
-SRC_URI:append:qrbx210  += "file://camera_cgroup.service"
-SRC_URI:append:kalama   += "file://qmmf-server-env_kalama"
-SRC_URI:append:pineapple   += "file://qmmf-server-env_pineapple"
-SRC_URI:append:kera     += "file://qmmf-server-env_kera"
-SRC_URI:append:sun   += "file://qmmf-server-env_sun"
-SRC_URI:append:bengal  += "file://qmmf-server-env_qrb5165"
-SRC_URI:append:bengal  += "file://camera_cgroup.service"
+
+SRC_URI:append:qrb5165  = " file://qmmf-server-env_qrb5165"
+SRC_URI:append:qrb5165  = " file://camera_cgroup.service"
+SRC_URI:append:qrbx210  = " file://qmmf-server-env_qrb5165"
+SRC_URI:append:qrbx210  = " file://camera_cgroup.service"
+SRC_URI:append:kalama   = " file://qmmf-server-env_wayland"
+SRC_URI:append:pineapple   = " file://qmmf-server-env_wayland"
+SRC_URI:append:kera     = " file://qmmf-server-env_wayland"
+SRC_URI:append:sun   = " file://qmmf-server-env_wayland"
+SRC_URI:append:bengal  = " file://qmmf-server-env_qrb5165"
+SRC_URI:append:bengal  = " file://camera_cgroup.service"
+SRC_URI:append:vienna  = " file://qmmf-server-env_wayland"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -91,14 +96,8 @@ do_install:append () {
     install -d ${D}/data/misc/qmmf
     if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcm2290-mtp" ] || [ ${BASEMACHINE} == "qcm4325-mtp" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "kalama" ]; then
-        install ${WORKDIR}/qmmf-server-env_kalama -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "pineapple" ]; then
-        install ${WORKDIR}/qmmf-server-env_pineapple -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "kera" ]; then
-        install ${WORKDIR}/qmmf-server-env_kera -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "sun" ]; then
-        install ${WORKDIR}/qmmf-server-env_sun -D ${D}/${sysconfdir}/qmmf-server-env
+    elif [ ${BASEMACHINE} == "kalama" ] || [ ${BASEMACHINE} == "pineapple" ] || [ ${BASEMACHINE} == "kera" ] || [ ${BASEMACHINE} == "sun" ] || [ ${BASEMACHINE} == "vienna" ]; then
+        install ${WORKDIR}/qmmf-server-env_wayland -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
     fi
