@@ -24,6 +24,8 @@ INSTALL_INCDIR := "${includedir}"
 
 FILES:${PN} += "${INSTALL_BINDIR}"
 FILES:${PN} += "${INSTALL_LIBDIR}"
+FILES:${PN}-dev += "${INSTALL_LIBDIR}/libheif.so"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
+INSANE_SKIP:${PN} += "dev-so"
