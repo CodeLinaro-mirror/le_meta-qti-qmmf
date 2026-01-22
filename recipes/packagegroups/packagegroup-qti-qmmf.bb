@@ -22,4 +22,5 @@ RDEPENDS:packagegroup-qti-qmmf-sdk = ' \
 RDEPENDS:packagegroup-qti-qmmf:remove:kalama = "packagegroup-qti-pulseaudio"
 RDEPENDS:packagegroup-qti-qmmf:remove:pineapple = "packagegroup-qti-pulseaudio"
 RDEPENDS:packagegroup-qti-qmmf:remove:kera = "packagegroup-qti-pulseaudio"
+RDEPENDS:packagegroup-qti-qmmf:remove:alor = "packagegroup-qti-pulseaudio"
 RDEPENDS:packagegroup-qti-qmmf:remove:sun = "packagegroup-qti-pulseaudio"
