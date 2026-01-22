@@ -17,14 +17,7 @@ S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE = "-DBUILD_SHARED_LIBS=ON"
 
-# Install directries.
-INSTALL_BINDIR := "${bindir}"
-INSTALL_LIBDIR := "${libdir}"
-INSTALL_INCDIR := "${includedir}"
-
-FILES:${PN} += "${INSTALL_BINDIR}"
-FILES:${PN} += "${INSTALL_LIBDIR}"
-FILES:${PN}-dev += "${INSTALL_LIBDIR}/libheif.so"
+FILES:${PN} += "${libdir}/*"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
