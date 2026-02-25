@@ -13,9 +13,9 @@ Signed-off-by: Kin Zhao <yunjiez@qti.qualcomm.com>
  libheif/api/libheif/heif_tiling.h      |  6 +++
  libheif/context.cc                     | 58 ++++++++++++++++++++++++++
  libheif/context.h                      |  5 +++
- libheif/image-items/grid.cc            | 41 ++++++++++++++++++
+ libheif/image-items/grid.cc            | 47 +++++++++++++++++++++
  libheif/image-items/grid.h             |  4 ++
- 8 files changed, 171 insertions(+), 1 deletion(-)
+ 8 files changed, 177 insertions(+), 1 deletion(-)
 
 diff --git a/libheif/api/libheif/heif_aux_images.cc b/libheif/api/libheif/heif_aux_images.cc
 index c32d3ecb..c28aebe3 100644
@@ -215,10 +215,10 @@ index 6d41565a..2713404a 100644
  
    bool is_primary_image_set() const { return m_primary_image != nullptr; }
 diff --git a/libheif/image-items/grid.cc b/libheif/image-items/grid.cc
-index 24ece569..eb0da8df 100644
+index 24ece569..39df8fbd 100644
 --- a/libheif/image-items/grid.cc
 +++ b/libheif/image-items/grid.cc
-@@ -708,6 +708,47 @@ Error ImageItem_Grid::add_image_tile(uint32_t tile_x, uint32_t tile_y,
+@@ -708,6 +708,53 @@ Error ImageItem_Grid::add_image_tile(uint32_t tile_x, uint32_t tile_y,
    return Error::Ok;
  }
  
@@ -229,8 +229,14 @@ index 24ece569..eb0da8df 100644
 +  std::vector<unsigned char> bitstreams(data, data + length);
 +  heif_image_tiling tiling = get_heif_image_tiling();
 +
-+  tiling.tile_width = tiling.image_width / tiling.num_columns;
-+  tiling.tile_height = tiling.image_height / tiling.num_rows;
++  // If no tile avaiable, use default tile width/height.
++  if (tiling.tile_width == 0) {
++    tiling.tile_width = 512;
++  }
++
++  if (tiling.tile_height == 0) {
++    tiling.tile_height = 512;
++  }
 +
 +  auto encodingResult = get_context()->encoded_image(format,
 +      tiling.tile_width, tiling.tile_height, bitstreams);
