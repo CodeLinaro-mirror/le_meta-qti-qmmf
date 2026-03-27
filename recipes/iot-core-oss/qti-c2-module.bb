@@ -29,7 +29,6 @@ DEPENDS:append:sun = " mm-audio-headers"
 DEPENDS:append:sun = " audio-codec2"
 DEPENDS:append:vienna = " media"
 DEPENDS:append:vienna = " media-external"
-DEPENDS:append:vienna = " audio-codec2"
 
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/iot-core-oss/:"
 
@@ -62,7 +61,6 @@ ENABLE_AUDIO_PLUGINS:pineapple := "TRUE"
 ENABLE_AUDIO_PLUGINS:kera := "TRUE"
 ENABLE_AUDIO_PLUGINS:alor := "TRUE"
 ENABLE_AUDIO_PLUGINS:sun := "TRUE"
-ENABLE_AUDIO_PLUGINS:vienna := "TRUE"
 
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
 EXTRA_OECMAKE += "-DSYSROOT_LIBDIR=${STAGING_LIBDIR}"
