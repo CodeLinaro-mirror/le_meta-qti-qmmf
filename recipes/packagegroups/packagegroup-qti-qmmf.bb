@@ -13,6 +13,7 @@ PACKAGES = ' \
 RDEPENDS:packagegroup-qti-qmmf = ' \
     ${@bb.utils.contains("DISTRO_FEATURES", "qti-qmmf", bb.utils.contains("DISTRO_FEATURES", "qti-camera", "packagegroup-qti-qmmf-sdk", "", d), "", d)} \
     ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio", bb.utils.contains("DISTRO_FEATURES", "qti-audio", "packagegroup-qti-pulseaudio", "", d), "", d)} \
+    ${@bb.utils.contains("DISTRO_FEATURES", "qti-video", "libheif", "", d)}  \
 '
 
 RDEPENDS:packagegroup-qti-qmmf-sdk = ' \
