@@ -17,6 +17,8 @@ DEPENDS:append:kera = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'd
 DEPENDS:append:kera = " ${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
 DEPENDS:append:alor = "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
 DEPENDS:append:alor = "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
+DEPENDS:append:pebble = "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'data', '', d)}"
+DEPENDS:append:pebble = "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'dbus', '', d)}"
 
 FILESPATH =+ "${WORKSPACE}:"
 SRC_URI = "file://vendor/qcom/opensource/system/sample-apps/"
@@ -32,6 +34,7 @@ TARGET_SUPPORTS_S2D:kalama := "${@bb.utils.contains('MACHINE_FEATURES', 'hiberna
 TARGET_SUPPORTS_S2D:pineapple := "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'TRUE', 'FALSE', d)}"
 TARGET_SUPPORTS_S2D:kera := "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'TRUE', 'FALSE', d)}"
 TARGET_SUPPORTS_S2D:alor := "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'TRUE', 'FALSE', d)}"
+TARGET_SUPPORTS_S2D:pebble := "${@bb.utils.contains('MACHINE_FEATURES', 'hibernate', 'TRUE', 'FALSE', d)}"
 
 EXTRA_OECMAKE += "-DGST_VERSION_REQUIRED=1.14.4"
 EXTRA_OECMAKE += "-DSYSROOT_INCDIR=${STAGING_INCDIR}"
@@ -53,3 +56,4 @@ do_install[noexec] = "${@bb.utils.contains('BASEMACHINE', 'kalama', bb.utils.con
 do_install[noexec] = "${@bb.utils.contains('BASEMACHINE', 'pineapple', bb.utils.contains('MACHINE_FEATURES', 'hibernate', '0', '1', d), '', d)}"
 do_install[noexec] = "${@bb.utils.contains('BASEMACHINE', 'kera', bb.utils.contains('MACHINE_FEATURES', 'hibernate', '0', '1', d), '', d)}"
 do_install[noexec] = "${@bb.utils.contains('BASEMACHINE', 'alor', bb.utils.contains('MACHINE_FEATURES', 'hibernate', '0', '1', d), '', d)}"
+do_install[noexec] = "${@bb.utils.contains('BASEMACHINE', 'pebble', bb.utils.contains('MACHINE_FEATURES', 'hibernate', '0', '1', d), '', d)}"

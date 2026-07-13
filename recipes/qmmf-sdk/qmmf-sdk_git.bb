@@ -12,6 +12,9 @@ inherit features_check
 REQUIRED_DISTRO_FEATURES += "qti-camera"
 REQUIRED_DISTRO_FEATURES += "qti-qmmf"
 
+# For others sdmsteppe, default TOOLCHAIN is sdllvm
+TOOLCHAIN:pebble = "aospllvm"
+
 # Required Dependencies for qmmf-sdk
 
 DEPENDS += "binder"
@@ -39,6 +42,8 @@ DEPENDS:append:bengal = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 
 DEPENDS:append:bengal = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 DEPENDS:append:vienna = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
 DEPENDS:append:vienna = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
+DEPENDS:append:pebble = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'libhardware', '', d)}"
+DEPENDS:append:pebble = " ${@bb.utils.contains('DISTRO_FEATURES', 'qti-camera', 'camera-metadata', '', d)}"
 
 RDEPENDS:${PN} = "gbm"
 
@@ -71,6 +76,7 @@ SRC_URI:append:sun      = " file://qmmf-server-env_wayland"
 SRC_URI:append:bengal   = " file://qmmf-server-env_qrb5165"
 SRC_URI:append:bengal   = " file://camera_cgroup.service"
 SRC_URI:append:vienna   = " file://qmmf-server-env_wayland"
+SRC_URI:append:pebble   = " file://qmmf-server-env_wayland"
 
 S = "${WORKDIR}/qmmf-sdk"
 
@@ -99,7 +105,7 @@ do_install:append () {
     install -d ${D}/data/misc/qmmf
     if [ ${BASEMACHINE} == "qrb5165" ] || [ ${BASEMACHINE} == "qrbx210" ] || [ ${BASEMACHINE} == "qcm2290-mtp" ] || [ ${BASEMACHINE} == "qcm4325-mtp" ]; then
         install ${WORKDIR}/qmmf-server-env_qrb5165 -D ${D}/${sysconfdir}/qmmf-server-env
-    elif [ ${BASEMACHINE} == "kalama" ] || [ ${BASEMACHINE} == "pineapple" ] || [ ${BASEMACHINE} == "kera" ] || [ ${BASEMACHINE} == "sun" ] || [ ${BASEMACHINE} == "vienna" ] || [${BASEMACHINE} == "alor"]; then
+    elif [ ${BASEMACHINE} == "kalama" ] || [ ${BASEMACHINE} == "pineapple" ] || [ ${BASEMACHINE} == "kera" ] || [ ${BASEMACHINE} == "pebble" ] || [ ${BASEMACHINE} == "sun" ] || [ ${BASEMACHINE} == "vienna" ] || [${BASEMACHINE} == "alor"]; then
         install ${WORKDIR}/qmmf-server-env_wayland -D ${D}/${sysconfdir}/qmmf-server-env
     else
         install ${WORKDIR}/qmmf-server-env -D ${D}/${sysconfdir}/qmmf-server-env
