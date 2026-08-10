@@ -34,8 +34,8 @@ DEPENDS:append:qcm2290-mtp += "${@bb.utils.contains('DISTRO_FEATURES', 'qti-came
 RDEPENDS:${PN} = "gbm"
 
 # Required Dependencies for Widevine DRM
-DEPENDS:append:kalama = " cecdm glib-networking"
-RDEPENDS:${PN}:append:kalama = " cecdm glib-networking"
+DEPENDS:append:kalama = " glib-networking"
+RDEPENDS:${PN}:append:kalama = " glib-networking"
 
 # Data folder for qmmf sdk
 QMMF_DATA = "/data/misc/qmmf"
