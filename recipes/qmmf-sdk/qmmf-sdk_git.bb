@@ -14,6 +14,9 @@ REQUIRED_DISTRO_FEATURES += "qti-qmmf"
 
 # Required Dependencies for qmmf-sdk
 
+inherit ${@'qti-sanitizers' if d.getVar('QTI_SANITIZER') else ''}
+QTI_SANITIZER_WHITELIST:append = "${@bb.utils.contains('QTI_SANITIZER', 'hwasan', ' ${PN}', '', d)}"
+
 DEPENDS += "binder"
 DEPENDS += "glib-2.0"
 DEPENDS += "gtest"
