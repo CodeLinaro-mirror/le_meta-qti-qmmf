@@ -20,7 +20,7 @@ SRC_URI  := "file://le-camera-server"
 
 S = "${WORKDIR}/le-camera-server"
 
-SYSTEMD_SERVICE:${PN} = "cam-server.service"
+SYSTEMD_SERVICE:${PN} = "qti-cam-server.service"
 
 EXTRA_OECMAKE += " -DTARGET_BOARD_PLATFORM=${BASEMACHINE} "
 EXTRA_OECMAKE += "-DCAM_SERVER_USER=system"
