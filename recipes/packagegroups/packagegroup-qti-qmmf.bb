@@ -19,6 +19,8 @@ RDEPENDS:packagegroup-qti-qmmf = ' \
 RDEPENDS:packagegroup-qti-qmmf-sdk = ' \
     qmmf-sdk \
 '
+RDEPENDS:packagegroup-qti-qmmf-sdk:remove:pebble = "qmmf-sdk"
+RDEPENDS:packagegroup-qti-qmmf:append:pebble = " qcom-camera-server"
 
 RDEPENDS:packagegroup-qti-qmmf:remove:kalama = "packagegroup-qti-pulseaudio"
 RDEPENDS:packagegroup-qti-qmmf:remove:pineapple = "packagegroup-qti-pulseaudio"
