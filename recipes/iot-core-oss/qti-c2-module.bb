@@ -21,7 +21,7 @@ DEPENDS:append:qcm2290-mtp += "media-external"
 FILESPATH =+ "${WORKSPACE}/vendor/qcom/opensource/iot-core-oss/:"
 
 SRC_URI = "file://c2-module/"
-S = "${WORKDIR}/c2-module"
+S = "${UNPACKDIR}/c2-module"
 
 # Install directries.
 INSTALL_BINDIR := "${bindir}"

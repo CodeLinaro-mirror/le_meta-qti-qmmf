@@ -62,7 +62,7 @@ SRC_URI:append:pineapple   += "file://qmmf-server-env_pineapple"
 SRC_URI:append:qcm2290-mtp  += "file://qmmf-server-env_qrb5165"
 SRC_URI:append:qcm2290-mtp  += "file://camera_cgroup.service"
 
-S = "${WORKDIR}/qmmf-sdk"
+S = "${UNPACKDIR}/qmmf-sdk"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
